@@ -1,3 +1,0 @@
-main.o: src/main.c src/opcodes.h src/atto.h src/config.h
-stack.o: src/stack.c src/stack.h src/atto.h src/config.h
-vm.o: src/vm.c src/opcodes.h src/atto.h src/config.h
