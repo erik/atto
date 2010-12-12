@@ -22,6 +22,8 @@
 #include "opcodes.h"
 
 TValue createNumber(AttoNumber);
+TValue createNull();
+
 TValue MathOp(int, Stack*);
 TValue BitwiseOp(int, Stack*);
 TValue ComparisonOp(int, Stack*);

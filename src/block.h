@@ -20,6 +20,7 @@
 #include "atto.h"
 #include "vec.h"
 #include "stack.h"
+#include "value.h"
 
 typedef struct {
   Vector* k;     /* constants */

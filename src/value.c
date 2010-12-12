@@ -27,6 +27,12 @@ TValue createNumber(AttoNumber n) {
   return tv;
 }
 
+TValue createNull() {
+  TValue tv;
+  tv.type = TYPE_NULL;
+  return tv;
+}
+
 TValue MathOp(int opcode, Stack* stack) {
   TValue b = pop(stack); 
   TValue a = pop(stack); 
@@ -49,14 +55,14 @@ TValue MathOp(int opcode, Stack* stack) {
   case OP_DIV:
     if(arg1 == 0) {
       puts("Error: divide by 0.");
-      return;
+      return createNull();
     }
     result = arg0 / arg1;
     break;
   case OP_MOD:
     if(arg1 == 0) {
       puts("Error: divide by 0.");
-      return;
+      return createNull();
     }
     result = (long)arg0 % (long)arg1;
     break;
@@ -65,7 +71,7 @@ TValue MathOp(int opcode, Stack* stack) {
     break;
   default:
     puts("Unrecognized opcode");
-    return;
+    return createNull();
   }
   a = createNumber(result);
   push(stack, a);
@@ -93,7 +99,7 @@ TValue BitwiseOp(int opcode, Stack* stack) {
     break;
   default:
     puts("Unrecognized opcode");
-    return;
+    return createNull();
   }
   a = createNumber(result);
   push(stack, a);
@@ -130,7 +136,7 @@ TValue ComparisonOp(int opcode, Stack* stack) {
     break;
   default:
     puts("Unrecognized opcode.");
-    return;
+    return createNull();
   }
 
   a = createNumber(result);
@@ -147,6 +153,8 @@ char* TValue_to_string(TValue v) {
   }
   case TYPE_STRING:
     return TV2STR(v);
-  }
+  case TYPE_NULL:
+    return "NULL";
+  }   
   return "Unknown type";  
 }

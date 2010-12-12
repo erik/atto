@@ -15,6 +15,7 @@
 */
 
 #include "stack.h"
+#include "value.h"
 
 #include <stdio.h>
 
@@ -49,7 +50,7 @@ void push(Stack* s, TValue v) {
 TValue pop(Stack* s) {
   if(--s->top < 0) {
     puts("Stack empty.");
-    return;
+    return createNull();
   }
   return s->values[s->top];
 }

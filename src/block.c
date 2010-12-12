@@ -59,8 +59,7 @@ int AttoBlock_push_const(AttoBlock* b, TValue v) {
 TValue AttoBlock_fetch_const(AttoBlock* b, int idx) {
   if(idx >= b->k->size) {
     puts("Error: trying to access constant out of bounds");
-    //TODO: return null instead;
-    return;
+    return createNull();
   }
   return getIndex(b->k, idx);
 }

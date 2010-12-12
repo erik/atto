@@ -18,6 +18,7 @@
 #define _VEC_H_
 
 #include "atto.h"
+#include "value.h"
 
 #define INITIAL_VECTOR_SIZE 10
 #define VECTOR_RESIZE_STEP  5

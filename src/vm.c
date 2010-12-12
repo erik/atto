@@ -33,7 +33,7 @@ void AttoVMDestroy(AttoVM* vm) {
   printf("Expected at least %d elements"				\
 	 " on the stack, but only %d found!\n",				\
 	 num, stack->top );						\
-  return *max;								\
+  return createNull();								\
   }
 
 #define NEXTINST { i = TV2INST(*++pc_val); }
@@ -44,7 +44,6 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
   TValue* max          = (TValue*)(block->code->elements + start + block->code->size);
   TValue *pc_val       = (TValue*)(block->code->elements + start);
   Instruction i        = TV2INST(*pc_val);
-  TValue *k            = (TValue*)block->k->elements;
   Stack *stack         = (Stack*)block->stack;
 
   int x;
@@ -107,7 +106,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       long jmp = (long)TV2NUM(pop(stack));
       if(jmp + pc_val >= max || jmp + pc_val < 0) {
 	puts("Invalid jump.");
-	return;
+	return createNull();
       }
       pc_val += jmp;
       DISPATCH;
@@ -117,7 +116,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       long index = (long)TV2NUM(pop(stack));
       if(index >= block->k->size) {
 	puts("Constant index out of bounds.");
-	return;
+	return createNull();
       }
       TValue k = getIndex(block->k, index);
       push(stack, k);
@@ -136,7 +135,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       DISPATCH;
     default:
       puts("Unrecognized opcode.");
-      return;
+      return createNull();
     }
   }
   return *max;

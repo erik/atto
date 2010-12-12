@@ -20,10 +20,11 @@
 #include "config.h"
 
 typedef enum {
+  TYPE_NULL,
   TYPE_NUMBER,
   TYPE_STRING,
-  // TODO: maybe?
-  TYPE_FUNCTION,
+  //TODO: maybe?
+  //TYPE_FUNCTION,
 } AttoType;
 
 typedef struct {
@@ -48,7 +49,7 @@ typedef struct {
   AttoType type;
 } TValue;
 
-#define TV2NUM(tv)  ((tv).value.number)
+#define TV2NUM(tv)   ((tv).value.number)
 #define TV2INST(tv)  (Instruction)((tv).value.number)
 
 #define TV2STR(tv)  STRPTR((tv).value.string)
