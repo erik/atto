@@ -41,7 +41,7 @@ typedef enum {
   OP_XOR,
   OP_NOT,
 
-  /* comparision ops */
+  /* comparison ops */
   OP_EQ,
   OP_LT,
   OP_GT,

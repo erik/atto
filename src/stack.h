@@ -30,6 +30,8 @@ typedef struct {
 Stack* StackNew();
 void StackDestroy(Stack*);
 
+Stack* Stack_from_array(int, TValue*);
+
 void push(Stack*, TValue);
 TValue pop(Stack*);
 int filled(Stack*);

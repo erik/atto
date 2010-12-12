@@ -25,8 +25,17 @@ Stack *StackNew() {
 }
 
 void StackDestroy(Stack* s) {
-  UNUSED(s);
+  free(s);
   // nothing to do as long as s->values is statically allocated
+}
+
+Stack *Stack_from_array(int argc, TValue* argv) {
+  Stack* s = StackNew();
+  int i;
+  for(i = 0; i < argc; ++i) {
+    push(s, argv[i]);
+  }
+  return s;
 }
 
 void push(Stack* s, TValue v) {
@@ -38,7 +47,11 @@ void push(Stack* s, TValue v) {
 }
 
 TValue pop(Stack* s) {
-  return s->values[--s->top];
+  if(--s->top < 0) {
+    puts("Stack empty.");
+    return;
+  }
+  return s->values[s->top];
 }
 
 int filled(Stack* s) {

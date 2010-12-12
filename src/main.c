@@ -24,16 +24,18 @@
 #include "vm.h"
 #include "value.h"
 
-int main(void) {
+int main(int argc, char **argv) {
+  
+  // TODO: place argv values on stack
+  Stack* argStack = StackNew();
+
   AttoVM* vm = AttoVMNew();
   
   AttoBlock* b = AttoBlockNew();
-  push(b->stack,  createNumber(10));
-  push(b->stack,  createNumber(2));
-  Instruction inst = OP_SWAP;
+  push(b->stack,  createNumber(0));
+  Instruction inst = OP_DUMPSTACK;
   AttoBlock_push_inst(b, inst);
-
-  vm_interpret(vm, b, 0, 0, NULL);
-  print_stack(b->stack);
+  
+  vm_interpret(vm, b, 0, 0, argStack);
   return 0;
 }

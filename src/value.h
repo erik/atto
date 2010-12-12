@@ -18,8 +18,12 @@
 #define _VALUE_H_
 
 #include "atto.h"
+#include "stack.h"
+#include "opcodes.h"
 
 TValue createNumber(AttoNumber);
-
-
+TValue MathOp(int, Stack*);
+TValue BitwiseOp(int, Stack*);
+TValue ComparisonOp(int, Stack*);
+char   *TValue_to_string(TValue);
 #endif /* _VALUE_H_ */

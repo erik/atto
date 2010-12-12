@@ -31,8 +31,8 @@ typedef struct {
   int len;
 } AttoString;
 
-#define STRPTR(as) (as)->ptr
-#define STRLEN(as) (as)->len
+#define STRPTR(as) (as).ptr
+#define STRLEN(as) (as).len
 
 typedef ATTO_NUMBER AttoNumber;
 
@@ -50,5 +50,7 @@ typedef struct {
 
 #define TV2NUM(tv)  ((tv).value.number)
 #define TV2INST(tv)  (Instruction)((tv).value.number)
+
+#define TV2STR(tv)  STRPTR((tv).value.string)
 
 #endif /* _ATTO_H_ */
