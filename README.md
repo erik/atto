@@ -1,13 +1,12 @@
 #atto
 
 ##About
-FIXME: write
+Atto is a [stack-based virtual machine](http://en.wikipedia.org/wiki/Stack_machine)
+ with the aim of small code size. The entire program is currently ~500 sloc, excluding
+ whitespace, comments, etc.
 
 ##Usage
-FIXME: write
-
-##Installation
-FIXME: write
+`make` followed by `./atto`. 
 
 ##License
 This program is free software: you can redistribute it and/or modify
