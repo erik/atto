@@ -55,6 +55,6 @@ void print_stack(Stack* s) {
   int i;
   for(i = 0; i < s->top; ++i) {
     // TODO: string print
-    printf("[%d]\t=>\t%Lf\n", i, NVALUE(s->values[i]));
+    printf("[%d]\t=>\t%Lf\n", i, TV2NUM(s->values[i]));
   }
 }

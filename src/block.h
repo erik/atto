@@ -14,26 +14,24 @@
  *   along with Atto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _VEC_H_
-#define _VEC_H_
+#ifndef _BLOCK_H_
+#define _BLOCK_H_
 
 #include "atto.h"
-
-#define INITIAL_VECTOR_SIZE 10
-#define VECTOR_RESIZE_STEP  5
+#include "vec.h"
+#include "stack.h"
 
 typedef struct {
-  TValue *elements;
-  int size;
-  int alloc;
-} Vector;
+  Vector* k;     /* constants */
+  Vector* code;  /* opcodes */
+  Stack* stack;
+} AttoBlock;
 
+AttoBlock  *AttoBlockNew();
+void        AttoBlockDestroy(AttoBlock*);
+int         AttoBlock_push_inst(AttoBlock*, Instruction);
+Instruction AttoBlock_fetch_inst(AttoBlock*, int);
+int         AttoBlock_push_const(AttoBlock*, TValue);
+TValue      AttoBlock_fetch_const(AttoBlock*, int);
 
-Vector *VectorNew();
-void    VectorDestroy(Vector*);
-void    resizeVector(Vector*, int);
-void    setIndex(Vector*, int, TValue);
-TValue  getIndex(Vector*, int);
-int     append(Vector*, TValue);
-
-#endif /* _VEC_H_ */
+#endif /* _BLOCK_H_ */

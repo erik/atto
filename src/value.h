@@ -14,26 +14,12 @@
  *   along with Atto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _VEC_H_
-#define _VEC_H_
+#ifndef _VALUE_H_
+#define _VALUE_H_
 
 #include "atto.h"
 
-#define INITIAL_VECTOR_SIZE 10
-#define VECTOR_RESIZE_STEP  5
-
-typedef struct {
-  TValue *elements;
-  int size;
-  int alloc;
-} Vector;
+TValue createNumber(AttoNumber);
 
 
-Vector *VectorNew();
-void    VectorDestroy(Vector*);
-void    resizeVector(Vector*, int);
-void    setIndex(Vector*, int, TValue);
-TValue  getIndex(Vector*, int);
-int     append(Vector*, TValue);
-
-#endif /* _VEC_H_ */
+#endif /* _VALUE_H_ */

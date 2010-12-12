@@ -20,7 +20,20 @@
 #include "opcodes.h"
 #include "atto.h"
 #include "vec.h"
+#include "block.h"
+#include "vm.h"
+#include "value.h"
 
 int main(void) {
+  AttoVM* vm = AttoVMNew();
+  
+  AttoBlock* b = AttoBlockNew();
+  push(b->stack,  createNumber(10));
+  push(b->stack,  createNumber(2));
+  Instruction inst = OP_SWAP;
+  AttoBlock_push_inst(b, inst);
+
+  vm_interpret(vm, b, 0, 0, NULL);
+  print_stack(b->stack);
   return 0;
 }

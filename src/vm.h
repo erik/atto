@@ -14,8 +14,11 @@
  *   along with Atto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #ifndef _VM_H_
 #define _VM_H_
+
+#include "block.h"
 
 typedef struct {
   // constants, functions, etc. go here
@@ -23,5 +26,5 @@ typedef struct {
 
 AttoVM *AttoVMNew();
 void    AttoVMDestroy(AttoVM*);
-
+TValue  vm_interpret(AttoVM*, AttoBlock*, int, int, const TValue[]);
 #endif /* _VM_H_ */

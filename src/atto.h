@@ -48,6 +48,7 @@ typedef struct {
   AttoType type;
 } TValue;
 
-#define NVALUE(tv)  (tv).value.number
+#define TV2NUM(tv)  ((tv).value.number)
+#define TV2INST(tv)  (Instruction)((tv).value.number)
 
 #endif /* _ATTO_H_ */

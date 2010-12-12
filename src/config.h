@@ -19,9 +19,12 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdint.h>
 
 #define UNUSED(x) ((void)(x))
 
 #define ATTO_NUMBER long double
+
+typedef uint32_t Instruction;
 
 #endif /* _CONFIG_H_ */

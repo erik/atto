@@ -1,3 +1,4 @@
+
 /*   This file is part of Atto.
  *
  *   Atto is free software: you can redistribute it and/or modify
@@ -25,6 +26,9 @@ typedef struct {
   TValue values[MAX_STACK_SIZE];
   int top;
 } Stack;
+
+Stack* StackNew();
+void StackDestroy(Stack*);
 
 void push(Stack*, TValue);
 TValue pop(Stack*);

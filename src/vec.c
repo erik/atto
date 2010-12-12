@@ -51,6 +51,16 @@ void setIndex(Vector *vec, int idx, TValue val) {
   vec->elements[vec->size++] = val;
 }
 
+TValue getIndex(Vector *vec, int idx) {
+  if(idx >= vec->size) {
+    puts("Error: getIndex: array index out of bounds");
+    //TODO: return null
+    return;
+  }
+  
+  return vec->elements[idx];  
+}
+
 int append(Vector *vec, TValue val) {
   setIndex(vec, vec->size, val);
   return vec->size;

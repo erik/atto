@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=  -Wall -Wextra -std=c99 -g
+CFLAGS=  -Wall -Wextra -std=c99 -g -Wno-unused-parameter
 LNFLAGS= -lm
 SRC=$(wildcard src/*.c)
 OBJ=$(SRC:.c=.o)
@@ -10,9 +10,15 @@ all: $(OBJ)
 clean:
 	rm -f $(OBJ) $(EXE)
 
-src/main.o: src/main.c src/opcodes.h src/atto.h src/config.h
+src/block.o: src/block.c src/block.h src/atto.h src/config.h src/vec.h \
+ src/stack.h
+src/main.o: src/main.c src/opcodes.h src/atto.h src/config.h src/vec.h \
+ src/block.h src/stack.h src/vm.h src/value.h
 src/stack.o: src/stack.c src/stack.h src/atto.h src/config.h
-src/vm.o: src/vm.c src/opcodes.h src/atto.h src/config.h
+src/value.o: src/value.c src/value.h src/atto.h src/config.h
+src/vec.o: src/vec.c src/vec.h src/atto.h src/config.h
+src/vm.o: src/vm.c src/opcodes.h src/atto.h src/config.h src/vm.h src/block.h \
+ src/vec.h src/stack.h
 
 .c.o:
 	@echo "   cc $<"
