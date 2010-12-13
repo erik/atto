@@ -23,19 +23,74 @@
 #include "block.h"
 #include "vm.h"
 #include "value.h"
+#include "load.h"
+
+static int reader(LoadState* S, unsigned char* b, size_t size)
+{
+    size_t i;
+    for (i = 0; i < size; ++i) {
+        int c = fgetc(S->fp);
+        b[i] = c;
+    }
+    return i;
+}
+
+static int usage(void)  {
+  fprintf(stderr, "Usage:\natto [options] file\n"
+	  "-v\tDisplay version and exit\n"
+	  "-h\tDisplay this help text\n");
+  return 1;
+}
 
 int main(int argc, char **argv) {
   
+  int i;
+  char* file = NULL;
+  for(i = 1; i < argc; ++i) {
+    char *arg = argv[i];
+    if(arg[0] == '-') {
+      switch(arg[1]) {
+      case 'v':
+	printf("atto v%d.%d\n", VERSION_MAJOR, VERSION_MINOR);
+	return 0;
+      case 'h':
+	usage();
+	return 0;
+      default:
+	fprintf(stderr, "Unrecognized switch -%c\n", arg[1]);
+	return usage();
+      }
+    } else {
+      if(file != NULL) {
+	return usage();
+      }
+      file = arg;
+    }
+  }
+
+  if(file == NULL) {
+    fprintf(stderr, "no file given\n");
+    return usage();
+  }
+
+  FILE* in = fopen(file, "rb");
+  if(in == NULL) {
+    fprintf(stderr, "%s: no such file\n", file);
+    return 1;
+  }
+
   // TODO: place argv values on stack
   Stack* argStack = StackNew();
-
-  AttoVM* vm = AttoVMNew();
   
+  AttoVM* vm = AttoVMNew();
   AttoBlock* b = AttoBlockNew();
-  push(b->stack,  createNumber(0));
-  Instruction inst = OP_DUMPSTACK;
-  AttoBlock_push_inst(b, inst);
+ 
+  Proto* p = AttoLoad(vm, b, reader, file, in );
+  b = Proto_to_block(vm, p);
   
   vm_interpret(vm, b, 0, 0, argStack);
+  AttoVMDestroy(vm);
+  AttoBlockDestroy(b);
+  StackDestroy(argStack);
   return 0;
 }

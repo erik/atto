@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=  -Wall -Wextra -std=c99 -g -Wno-unused-parameter
+CFLAGS=  -Wall -Wextra -std=c99 -g -Wno-unused-parameter -DDEBUG
 LNFLAGS= -lm
 SRC=$(wildcard src/*.c)
 OBJ=$(SRC:.c=.o)

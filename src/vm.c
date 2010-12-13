@@ -40,7 +40,7 @@ void AttoVMDestroy(AttoVM* vm) {
 #define DISPATCH NEXTINST; break
 
 TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* argv) {
-
+  DEBUGLN("Interpret block");
   TValue* max          = (TValue*)(block->code->elements + start + block->code->size);
   TValue *pc_val       = (TValue*)(block->code->elements + start);
   Instruction i        = TV2INST(*pc_val);
@@ -48,7 +48,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
 
   int x;
   for(x = 0; pc_val < max; ++x) {
-    printf("[%d]\t%d\n", x,i);
+    DEBUGF("[%d]\t%d\n", x,i);
     switch(i) {
     case OP_NOP:
       DISPATCH;
@@ -112,13 +112,13 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       DISPATCH;
     }
     case OP_PUSHCONST: {
-      EXPECT_ON_STACK(1);
-      long index = (long)TV2NUM(pop(stack));
+      char index = (char)TV2NUM(*++pc_val);
       if(index >= block->k->size) {
 	puts("Constant index out of bounds.");
 	return createNull();
       }
       TValue k = getIndex(block->k, index);
+      puts(TValue_to_string(k));
       push(stack, k);
       DISPATCH;
     }
@@ -138,5 +138,6 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       return createNull();
     }
   }
-  return *max;
+  DEBUGLN("Finished block");
+  return createNull();
 }

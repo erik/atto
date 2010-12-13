@@ -27,4 +27,8 @@
 
 typedef uint32_t Instruction;
 
+#define VERSION        0x01
+#define VERSION_MAJOR  0x00
+#define VERSION_MINOR  0x01
+
 #endif /* _CONFIG_H_ */

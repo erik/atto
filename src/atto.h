@@ -54,4 +54,13 @@ typedef struct {
 
 #define TV2STR(tv)  STRPTR((tv).value.string)
 
+#if defined DEBUG
+#define DEBUGF(format, args...) fprintf(stderr, "DEBUG: " format, ## args)
+#define DEBUGLN(msg) fprintf(stderr, "DEBUG: %s\n", msg)
+#else
+#define DEBUGF(...)
+#define DEBUGLN(msg)
+#endif
+
+
 #endif /* _ATTO_H_ */
