@@ -24,6 +24,7 @@
 #include "vm.h"
 #include "value.h"
 #include "load.h"
+#include "dump.h"
 
 static int reader(LoadState* S, unsigned char* b, size_t size)
 {
@@ -45,7 +46,7 @@ static int usage(void)  {
 int main(int argc, char **argv) {
   
   int i;
-  char* file = NULL;
+   char* file = NULL;
   for(i = 1; i < argc; ++i) {
     char *arg = argv[i];
     if(arg[0] == '-') {
@@ -92,5 +93,39 @@ int main(int argc, char **argv) {
   AttoVMDestroy(vm);
   AttoBlockDestroy(b);
   StackDestroy(argStack);
+
   return 0;
 }
+
+
+/*
+ * For creating test files without painfully messing with
+ * a hex editor
+ *
+static int writer(AttoVM* vm, const void *p, size_t s, void *d) {
+  UNUSED(vm);
+  return (fwrite(p, s, 1, (FILE*)d) != 1) && (s != 0);
+}
+
+
+// in main
+  AttoVM* vm = AttoVMNew();
+  AttoBlock* b = AttoBlockNew();
+
+  AttoBlock_push_const(b, createNumber(2));
+  AttoBlock_push_const(b, createNumber(3));
+  
+  AttoBlock_push_inst(b, OP_PUSHCONST);
+  AttoBlock_push_inst(b, 0);
+
+  AttoBlock_push_inst(b, OP_PUSHCONST);
+  AttoBlock_push_inst(b, 1);
+
+  AttoBlock_push_inst(b, OP_ADD);
+  
+  AttoBlock_push_inst(b, OP_PRINT);
+
+  Proto* p = Proto_from_block(vm, b);
+  FILE* fp = fopen("test.ato", "wb");
+  dump(vm, p, writer, fp);
+*/

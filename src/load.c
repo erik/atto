@@ -14,7 +14,10 @@
  *   along with Atto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <string.h>
+
 #include "load.h"
+#include "dump.h"
 
 /* stolen from Bijou */
 #define IF(c, s)     if (c) error(S, s);
@@ -61,9 +64,8 @@ static void LoadCode(LoadState* S, Proto* f) {
   f->code = VectorNew();
   int i;
   for(i = 0; i < sizecode; ++i) {
-    Instruction x;
-    x = LoadChar(S);
-    append(f->code, createNumber(x));
+    AttoNumber inst = LoadNumber(S);
+    append(f->code, createNumber(inst));
   }
 }
 
@@ -98,9 +100,11 @@ static void LoadConstants(LoadState* S, Proto* f) {
 }
 
 static void LoadHeader(LoadState* S) {
-  int bytecodeMin = LoadChar(S);
-  int bytecodeMaj = LoadChar(S);
-  IF(bytecodeMaj + bytecodeMin != VERSION, "Version mismatch");
+  char h[HEADER_SIZE];
+  char s[HEADER_SIZE];
+  createHeader(h);
+  LoadBlock(S, s, HEADER_SIZE);
+  IF(memcmp(h, s, HEADER_SIZE), "bad header. different achitecture, or version mismatch");
 }
 
 static Proto* LoadProto(LoadState* S) {

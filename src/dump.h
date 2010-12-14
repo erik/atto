@@ -14,24 +14,31 @@
  *   along with Atto.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _CONFIG_H_
-#define _CONFIG_H_
+#ifndef _DUMP_H_
+#define _DUMP_H_
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
+#include "atto.h"
+#include "load.h"
+#include "vm.h"
 
-#define UNUSED(x) ((void)(x))
+/*
+ * Parameters:
+ * vm - may be unused, various uses
+ * p - what to write
+ * s - how much to write
+ * d - FILE* (or something else)
+ */
+typedef int (*Writer)(AttoVM *vm, const void *p, size_t s, void* d);
 
-#define ATTO_NUMBER long double
+typedef struct {
+  AttoVM* vm;
+  Writer writer;
+  void *data;
+  int status;
+} DumpState;
 
-typedef uint32_t Instruction;
+Proto *Proto_from_block(AttoVM*, AttoBlock*);
+int    dump(AttoVM*, Proto*, Writer, void*);
+void   createHeader(char*);
 
-#define VERSION        0x01
-#define VERSION_MAJOR  0x00
-#define VERSION_MINOR  0x01
-#define BYTECODE_SIGNATURE "\016ato"
-
-#define HEADER_SIZE   7 /* VERSION + BYTECODE_SIGNATURE + endianness */
-
-#endif /* _CONFIG_H_ */
+#endif /* _DUMP_H_ */

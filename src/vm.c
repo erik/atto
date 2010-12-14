@@ -118,7 +118,6 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
 	return createNull();
       }
       TValue k = getIndex(block->k, index);
-      puts(TValue_to_string(k));
       push(stack, k);
       DISPATCH;
     }

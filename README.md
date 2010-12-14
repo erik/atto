@@ -2,7 +2,7 @@
 
 ##About
 Atto is a [stack-based virtual machine](http://en.wikipedia.org/wiki/Stack_machine)
- with the aim of small code size. The entire program is currently ~500 sloc, excluding
+ with the aim of small code size. The entire program is currently ~850 sloc, excluding
  whitespace, comments, etc.
 
 ##Usage

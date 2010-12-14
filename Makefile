@@ -1,5 +1,7 @@
 CC=clang
-CFLAGS=  -Wall -Wextra -std=c99 -g -Wno-unused-parameter -DDEBUG
+#DEBUG= -g -DDEBUG
+OPTIMIZE=  -O3 -funroll-loops
+CFLAGS=  -Wall -Wextra -std=c99 -Wno-unused-parameter $(OPTIMIZE) $(DEBUG)
 LNFLAGS= -lm
 SRC=$(wildcard src/*.c)
 OBJ=$(SRC:.c=.o)
