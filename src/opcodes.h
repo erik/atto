@@ -54,7 +54,7 @@ typedef enum {
   OP_JMP,    // pc += [stack]
 
   /* const ops */
-  OP_PUSHCONST, // push const[[stack]] on to stack
+  OP_PUSHCONST, // push const[++pc] on to stack
 
   /* IO */
   OP_PRINT,
