@@ -23,6 +23,7 @@
 
 TValue createNumber(AttoNumber);
 TValue createNull();
+TValue createString(char*, int);
 
 TValue MathOp(int, Stack*);
 TValue BitwiseOp(int, Stack*);

@@ -33,6 +33,18 @@ TValue createNull() {
   return tv;
 }
 
+TValue createString(char* ptr, int len) {
+  TValue tv;
+  tv.type = TYPE_STRING;
+  AttoString as;
+  as.ptr = ptr;
+  as.len = len;
+  Value v;
+  v.string = as;
+  tv.value = v;
+  return tv;
+}
+
 TValue MathOp(int opcode, Stack* stack) {
   TValue b = pop(stack); 
   TValue a = pop(stack); 

@@ -68,7 +68,20 @@ void print_stack(Stack* s) {
   printf("Stack at %p:\n", (void*)s);
   int i;
   for(i = 0; i < s->top; ++i) {
-    // TODO: string print
-    printf("[%d]\t=>\t%Lf\n", i, TV2NUM(s->values[i]));
+    TValue v = s->values[i];
+    printf("[%d]\t=>\t", i);
+    switch(v.type) {
+    case TYPE_NULL:
+      printf("NULL\n");
+      break;
+    case TYPE_NUMBER:
+      printf("%Lf\n", TV2NUM(v));
+      break;
+    case TYPE_STRING:
+      printf("\"%s\"\n", TV2STR(v));
+      break;
+    default:
+      printf("Unknown type\n");
+    }
   }
 }

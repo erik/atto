@@ -33,6 +33,14 @@ void DumpInt(int x, DumpState *d) {
   DumpVar(x, d);
 }
 
+void DumpString(AttoString s, DumpState *d) {
+  int i, len = STRLEN(s);
+  DumpInt(len, d);
+  for(i = 0; i < len; ++i) {
+    DumpChar(STRPTR(s)[i], d);
+  }
+}
+
 void createHeader(char* h) {
   int x = 1;
   memcpy(h, BYTECODE_SIGNATURE, sizeof(BYTECODE_SIGNATURE));
@@ -47,10 +55,6 @@ void DumpHeader(DumpState *d) {
   DumpBlock(h, HEADER_SIZE, d);
 }
 
-void DumpString(AttoString *s, DumpState *d) {
-  puts("TODO: DumpString");
-}
-
 void DumpVector(Vector *vec, size_t s, DumpState *d) {
   DumpInt(vec->size, d);
   int i;
@@ -62,8 +66,11 @@ void DumpVector(Vector *vec, size_t s, DumpState *d) {
       DumpMem((void*)&n, 1, s, d);
       break;
     }
-    case TYPE_STRING:
-      puts("TODO: DumpVector--String");
+    case TYPE_STRING: {
+      AttoString str = v.value.string;
+      DumpString(str, d);
+      break;
+    }
     default:
       puts("Unrecognized type!");
       return;

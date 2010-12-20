@@ -23,7 +23,7 @@ typedef enum {
   TYPE_NULL,
   TYPE_NUMBER,
   TYPE_STRING,
-  //TODO: maybe?
+  //TODO: functions
   //TYPE_FUNCTION,
 } AttoType;
 

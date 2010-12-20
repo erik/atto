@@ -53,7 +53,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     case OP_NOP:
       DISPATCH;
     case OP_PUSH:
-      //TODO:
+      // FIXME: This opcode should probably be removed
       DISPATCH;
     case OP_POP:
       EXPECT_ON_STACK(1);
@@ -112,9 +112,9 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       DISPATCH;
     }
     case OP_PUSHCONST: {
-      char index = (char)TV2NUM(*++pc_val);
+      int index = TV2INST(*++pc_val);
       if(index >= block->k->size) {
-	puts("Constant index out of bounds.");
+	printf("%d: Constant index out of bounds.", index);
 	return createNull();
       }
       TValue k = getIndex(block->k, index);

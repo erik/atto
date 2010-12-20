@@ -50,8 +50,8 @@ typedef enum {
   OP_CMP,
 
   /* flow of control ops */
-  OP_IF,     // if [stack], exec next inst, otherwise skip
-  OP_JMP,    // pc += [stack]
+  OP_IF,        // if [stack], exec next inst, otherwise skip
+  OP_JMP,       // pc += [stack]
 
   /* const ops */
   OP_PUSHCONST, // push const[++pc] on to stack
@@ -62,7 +62,6 @@ typedef enum {
   
 } AttoOpCodes;
 
-/* TODO: this */
 #define OPCODE_NAMES "nop",			\
     "push", "pop", "dup", "swap",		\
     "add", "sub", "mul", "div", "mod", "pow",	\

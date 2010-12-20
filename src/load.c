@@ -52,6 +52,15 @@ static int LoadInt(LoadState* S) {
   return x;
 }
 
+static TValue LoadString(LoadState* S) {
+  int i, length = LoadInt(S);
+  char* ptr = malloc(length);
+  for(i = 0; i < length; ++i) {
+    ptr[i] = LoadChar(S);
+  }
+  return createString(ptr, length);
+}
+
 static AttoNumber LoadNumber(LoadState* S) {
   AttoNumber x;
   LoadVar(S, x);
@@ -88,7 +97,7 @@ static void LoadConstants(LoadState* S, Proto* f) {
       break;
     }
     case TYPE_STRING:
-      puts("TODO: String!");
+      obj = LoadString(S);
       break;
     default:
       printf("Unknown type: %d\n", type);
