@@ -21,6 +21,7 @@
 #include "stack.h"
 #include "opcodes.h"
 
+TValue createError(char*);
 TValue createNumber(AttoNumber);
 TValue createNull();
 TValue createString(char*, int);

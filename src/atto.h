@@ -20,6 +20,7 @@
 #include "config.h"
 
 typedef enum {
+  TYPE_ERROR,
   TYPE_NULL,
   TYPE_NUMBER,
   TYPE_STRING,
@@ -38,6 +39,7 @@ typedef struct {
 typedef ATTO_NUMBER AttoNumber;
 
 typedef union {
+  char *error;
   AttoNumber number;
   AttoString string;
   // TODO: function

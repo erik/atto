@@ -29,11 +29,18 @@ void AttoVMDestroy(AttoVM* vm) {
   free(vm);
 }
 
-#define EXPECT_ON_STACK(num) if(stack->top < num) { \
-  printf("Expected at least %d elements"				\
-	 " on the stack, but only %d found!\n",				\
-	 num, stack->top );						\
-  return createNull();								\
+#define ERROR(msg, args...) {                                           \
+  char err[1024];                                                       \
+  sprintf(err, "ERROR: [%d] %s: " msg, x, op_name, ## args);            \
+  fprintf(stderr, "%s\n", err);                                         \
+  return createError(msg);                                              \
+  }
+
+
+#define EXPECT_ON_STACK(num) if(stack->top < num) {                     \
+    ERROR("Expected at least %d elements"				\
+          " on the stack, but only %d found!\n",                        \
+          num, stack->top );						\
   }
 
 #define NEXTINST { i = TV2INST(*++pc_val); }
@@ -41,18 +48,23 @@ void AttoVMDestroy(AttoVM* vm) {
 
 TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* argv) {
   DEBUGLN("Interpret block");
+  int error            = 0;
   TValue* max          = (TValue*)(block->code->elements + start + block->code->size);
   TValue *pc_val       = (TValue*)(block->code->elements + start);
   Instruction i        = TV2INST(*pc_val);
   Stack *stack         = (Stack*)block->stack;
   const char* opcode_names[] = { OPCODE_NAMES };
+  const char* op_name = NULL;
 
   int x;
-  for(x = 0; pc_val < max; ++x) {
+  for(x = 0; pc_val < max && !error; ++x) {
 
-    // TODO: better error handling
+    op_name = i >= NUM_OPS ? "unknown" : opcode_names[i];
 
-    char * op_name = i >= NUM_OPS ? "unknown" : opcode_names[i];
+    if(i >= NUM_OPS) {
+      ERROR("bad opcode: %d", i);
+    }
+
     DEBUGF("[%d]\t%s\n", x, op_name);
     switch(i) {
     case OP_NOP:
@@ -110,7 +122,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       EXPECT_ON_STACK(1);
       long jmp = (long)TV2NUM(pop(stack));
       if(jmp + pc_val >= max || jmp + pc_val < 0) {
-	puts("Invalid jump.");
+	ERROR("Invalid jump: %ld", jmp);
 	return createNull();
       }
       pc_val += jmp;
@@ -119,8 +131,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     case OP_PUSHCONST: {
       int index = TV2INST(*++pc_val);
       if(index >= block->k->size) {
-	printf("%s: %d: Constant index out of bounds.\n", op_name, index);
-	return createNull();
+	ERROR("Constant index out of bounds: %d", index);
       }
       TValue k = getIndex(block->k, index);
       push(stack, k);
@@ -130,8 +141,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       int index = TV2INST(*++pc_val);
       
       if(index < 0 || index >= block->sizev) {
-        printf("%d: Variable index out of bounds.\n", index);
-        return createNull();
+        ERROR("Variable index out of bounds: %d", index);
       }
 
       push(stack, block->vars[i]);
@@ -142,7 +152,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       int index = TV2INST(*++pc_val);
       
       if(index < 0 || index >= block->sizev) {
-        printf("%d: Variable index out of bounds.\n", index);
+        ERROR("Variable index out of bounds: %d", index);
         return createNull();
       }
 
@@ -155,7 +165,9 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       EXPECT_ON_STACK(1);
       TValue v = pop(stack);
       char *str = TValue_to_string(v);
+
       printf("%s\n", str);
+
       if(v.type == TYPE_NUMBER) free(str);
       DISPATCH;
     }
@@ -163,10 +175,10 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       print_stack(stack);
       DISPATCH;
     default:
-      puts("Unrecognized opcode.");
-      return createNull();
+      ERROR("Unrecognized opcode.");
     }
   }
+
   DEBUGLN("Finished block");
   return createNull();
 }

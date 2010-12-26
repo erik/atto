@@ -18,6 +18,14 @@
 
 #include "value.h"
 
+TValue createError(char* msg) {
+  TValue tv;
+  Value v;
+  v.error = msg;
+  tv.value = v;
+  return tv;
+}
+
 TValue createNumber(AttoNumber n) {
   TValue tv;
   tv.type = TYPE_NUMBER;
@@ -167,6 +175,8 @@ char* TValue_to_string(TValue v) {
     return TV2STR(v);
   case TYPE_NULL:
     return "NULL";
+  case TYPE_ERROR:
+    return v.value.error;
   }   
   return "Unknown type";  
 }
