@@ -45,10 +45,15 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
   TValue *pc_val       = (TValue*)(block->code->elements + start);
   Instruction i        = TV2INST(*pc_val);
   Stack *stack         = (Stack*)block->stack;
+  const char* opcode_names[] = { OPCODE_NAMES };
 
   int x;
   for(x = 0; pc_val < max; ++x) {
-    DEBUGF("[%d]\t%d\n", x,i);
+
+    // TODO: better error handling
+
+    char * op_name = i >= NUM_OPS ? "unknown" : opcode_names[i];
+    DEBUGF("[%d]\t%s\n", x, op_name);
     switch(i) {
     case OP_NOP:
       DISPATCH;
@@ -114,11 +119,36 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     case OP_PUSHCONST: {
       int index = TV2INST(*++pc_val);
       if(index >= block->k->size) {
-	printf("%d: Constant index out of bounds.", index);
+	printf("%s: %d: Constant index out of bounds.\n", op_name, index);
 	return createNull();
       }
       TValue k = getIndex(block->k, index);
       push(stack, k);
+      DISPATCH;
+    }
+    case OP_PUSHVAR: {
+      int index = TV2INST(*++pc_val);
+      
+      if(index < 0 || index >= block->sizev) {
+        printf("%d: Variable index out of bounds.\n", index);
+        return createNull();
+      }
+
+      push(stack, block->vars[i]);
+      DISPATCH;
+    }
+    case OP_SETVAR: {
+      EXPECT_ON_STACK(1);
+      int index = TV2INST(*++pc_val);
+      
+      if(index < 0 || index >= block->sizev) {
+        printf("%d: Variable index out of bounds.\n", index);
+        return createNull();
+      }
+
+      TValue tos = pop(stack);
+
+      block->vars[index] = tos;
       DISPATCH;
     }
     case OP_PRINT: {

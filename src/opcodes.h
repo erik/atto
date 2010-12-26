@@ -55,11 +55,17 @@ typedef enum {
 
   /* const ops */
   OP_PUSHCONST, // push const[++pc] on to stack
+  
+  /* var ops */
+  OP_PUSHVAR,   // push var[++pc] on to stack
+  OP_SETVAR,    // var[++pc] = [stack]
 
   /* IO */
   OP_PRINT,
   OP_DUMPSTACK, 
   
+  NUM_OPS        /* how many opcodes are there? */
+
 } AttoOpCodes;
 
 #define OPCODE_NAMES "nop",			\
@@ -69,6 +75,7 @@ typedef enum {
     "eq", "lt", "gt", "lte", "gte", "cmp",	\
     "if", "jmp",				\
     "pushconst",				\
+    "pushvar", "setvar",                        \
     "print", "dumpstack"
 
 

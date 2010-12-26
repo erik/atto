@@ -108,6 +108,10 @@ static void LoadConstants(LoadState* S, Proto* f) {
   }
 }
 
+static void LoadVars(LoadState *S, Proto *p) {
+  p->sizev = LoadInt(S);
+}
+
 static void LoadHeader(LoadState* S) {
   char h[HEADER_SIZE];
   char s[HEADER_SIZE];
@@ -120,6 +124,7 @@ static Proto* LoadProto(LoadState* S) {
   Proto* p = malloc(sizeof(Proto));
   p->source = S->name;
   LoadConstants(S, p);
+  LoadVars(S, p);
   LoadCode(S, p);
   return p;
 }
@@ -147,5 +152,13 @@ AttoBlock* Proto_to_block(AttoVM* vm, Proto* p) {
   b->k = p->k;
   b->code = p->code;
   b->stack = StackNew();
+  b->sizev = p->sizev;
+  b->vars = malloc(sizeof(TValue) * p->sizev);
+  
+  int i;
+  for( i = 0; i < p->sizev; ++i) {
+    b->vars[i] = createNull();
+  }
+
   return b;
 }

@@ -100,6 +100,11 @@ void DumpConstants(Proto *p, DumpState *d) {
   }
 }
 
+void DumpVars(Proto *p, DumpState *d) {
+  int sizev = p->sizev;
+  DumpInt(sizev, d);
+}
+
 void DumpCode(Proto* p, DumpState *d) {
   int sizecode = p->code->size;
   DumpInt(sizecode, d);
@@ -118,6 +123,7 @@ Proto* Proto_from_block(AttoVM* vm, AttoBlock *b) {
   p->source = "lOl";
   p->k = b->k;
   p->code = b->code;
+  p->sizev = b->sizev;
   return p;
 }
 
@@ -129,6 +135,7 @@ int dump(AttoVM* vm, Proto* p, Writer writer, void *data) {
   d.status = 0;
   DumpHeader(&d);
   DumpConstants(p, &d);
+  DumpVars(p, &d);
   DumpCode(p, &d);
   return d.status;
 }

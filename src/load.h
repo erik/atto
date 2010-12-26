@@ -35,6 +35,7 @@ typedef int (*Reader)(struct LoadState* S, unsigned char *b, size_t size);
 typedef struct {
   char*    source;
   Vector*  k;
+  int      sizev;
   Vector*  code;  
 } Proto;
 

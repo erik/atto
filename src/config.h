@@ -27,9 +27,9 @@
 
 typedef uint32_t Instruction;
 
-#define VERSION        0x01
+#define VERSION        0x05
 #define VERSION_MAJOR  0x00
-#define VERSION_MINOR  0x01
+#define VERSION_MINOR  0x05
 #define BYTECODE_SIGNATURE "\016ato"
 
 #define HEADER_SIZE   7 /* VERSION + BYTECODE_SIGNATURE + endianness */
