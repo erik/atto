@@ -133,6 +133,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
 	ERROR("Constant index out of bounds: %d", index);
       }
       TValue k = getIndex(block->k, index);
+
       push(stack, k);
       DISPATCH;
     }
@@ -143,7 +144,9 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
         ERROR("Variable index out of bounds: %d", index);
       }
 
-      push(stack, block->vars[i]);
+      DEBUGF("PUSHVAR, index %d, value >> %s\n", index, TValue_to_string(block->vars[index]));
+
+      push(stack, block->vars[index]);
       DISPATCH;
     }
     case OP_SETVAR: {
@@ -155,9 +158,10 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
         return createNull();
       }
 
-      TValue tos = pop(stack);
+      block->vars[index] = pop(stack);
 
-      block->vars[index] = tos;
+      DEBUGF("SETVAR, index %d, value >> %s\n", index, TValue_to_string(block->vars[index]));
+
       DISPATCH;
     }
     case OP_PRINT: {
