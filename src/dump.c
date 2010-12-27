@@ -94,8 +94,12 @@ void DumpConstants(Proto *p, DumpState *d) {
     case TYPE_NUMBER:
       DumpVar(TV2NUM(v), d);
       break;
+    case TYPE_STRING:
+      DumpString(v.value.string, d);
+      break;
     default:
-      puts("other stuff, or unknown");
+      fprintf(stderr, "Unknown type: %d\n", v.type);
+      break;
     }    
   }
 }
