@@ -38,6 +38,9 @@ TValue createNumber(AttoNumber n) {
 TValue createNull() {
   TValue tv;
   tv.type = TYPE_NULL;
+  Value v;
+  v.error = "NULL";
+  tv.value = v;
   return tv;
 }
 

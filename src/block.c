@@ -21,6 +21,8 @@ AttoBlock *AttoBlockNew() {
   b->k    = VectorNew();
   b->code = VectorNew();
   b->stack = StackNew();
+  b->sizev = 0;
+  b->vars = NULL;
   return b;
 }
 

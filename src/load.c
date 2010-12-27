@@ -152,12 +152,20 @@ AttoBlock* Proto_to_block(AttoVM* vm, Proto* p) {
   b->k = p->k;
   b->code = p->code;
   b->stack = StackNew();
-  b->sizev = p->sizev;
-  b->vars = malloc(sizeof(TValue) * p->sizev);
   
-  int i;
-  for( i = 0; i < p->sizev; ++i) {
-    b->vars[i] = createNull();
+  b->sizev = p->sizev;
+  
+  DEBUGF("Vars: %d\n", p->sizev);
+
+  if(p->sizev > 0 ) {
+    b->vars = malloc(sizeof(TValue) * p->sizev);
+    
+    int i;
+    for( i = 0; i < p->sizev; ++i) {
+      b->vars[i] = createNull();
+    }
+  } else {
+    b->vars = NULL;
   }
 
   return b;
