@@ -65,7 +65,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       ERROR("bad opcode: %d", i);
     }
 
-    DEBUGF("[%d]\t%s\n", x, op_name);
+    DEBUGF("[%d]\t%s (%d)\n", x, op_name, i);
     switch(i) {
     case OP_NOP:
       DISPATCH;
@@ -123,7 +123,6 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       long jmp = (long)TV2NUM(pop(stack));
       if(jmp + pc_val >= max || jmp + pc_val < 0) {
 	ERROR("Invalid jump: %ld", jmp);
-	return createNull();
       }
       pc_val += jmp;
       DISPATCH;
@@ -166,7 +165,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       TValue v = pop(stack);
       char *str = TValue_to_string(v);
 
-      printf("%s\n", str);
+      printf("%s", str);
 
       if(v.type == TYPE_NUMBER) free(str);
       DISPATCH;

@@ -88,7 +88,7 @@ int main(int argc, char **argv) {
  
   Proto* p = AttoLoad(vm, b, reader, file, in );
   b = Proto_to_block(vm, p);
-  
+
   TValue ret = vm_interpret(vm, b, 0, 0, argStack);
 
   int status;

@@ -34,10 +34,12 @@ void DumpInt(int x, DumpState *d) {
 }
 
 void DumpString(AttoString s, DumpState *d) {
-  int i, len = STRLEN(s);
+  char* str = s.ptr;
+  int i;
+  int len = strlen(str);
   DumpInt(len, d);
-  for(i = 0; i < len; ++i) {
-    DumpChar(STRPTR(s)[i], d);
+  for(i = 0; i <= len; ++i) {
+    DumpChar(str[i], d);
   }
 }
 

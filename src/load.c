@@ -53,11 +53,13 @@ static int LoadInt(LoadState* S) {
 }
 
 static TValue LoadString(LoadState* S) {
-  int i, length = LoadInt(S);
+  int i;
+  int length = LoadInt(S);
   char* ptr = malloc(length);
-  for(i = 0; i < length; ++i) {
+  for(i = 0; i <= length; ++i) {
     ptr[i] = LoadChar(S);
   }
+
   return createString(ptr, length);
 }
 
