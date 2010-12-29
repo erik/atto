@@ -22,7 +22,6 @@ typedef enum {
   OP_NOP,
   
   /* basic stack ops */
-  OP_PUSH,
   OP_POP,  
   OP_DUP,
   OP_SWAP,
@@ -59,6 +58,7 @@ typedef enum {
   /* var ops */
   OP_PUSHVAR,   // push var[++pc] on to stack
   OP_SETVAR,    // var[++pc] = [stack]
+  OP_VALUEVAR,  // push value of var on top of stack onto stack
 
   /* IO */
   OP_PRINT,
@@ -69,13 +69,13 @@ typedef enum {
 } AttoOpCodes;
 
 #define OPCODE_NAMES "nop",			\
-    "push", "pop", "dup", "swap",		\
+    "pop", "dup", "swap",                       \
     "add", "sub", "mul", "div", "mod", "pow",	\
     "op", "and", "xor", "not",			\
     "eq", "lt", "gt", "lte", "gte", "cmp",	\
     "if", "jmp",				\
     "pushconst",				\
-    "pushvar", "setvar",                        \
+    "pushvar", "setvar", "valuevar",            \
     "print", "dumpstack"
 
 

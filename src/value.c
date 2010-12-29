@@ -44,6 +44,16 @@ TValue createNull() {
   return tv;
 }
 
+TValue createVar(TValue value) {
+  TValue tv;
+  Value v;
+  tv.type = TYPE_VAR;
+  v.var.value = &value.value;
+  v.var.type  = value.type;
+  tv.value = v;
+  return tv;
+}
+
 TValue createString(char* ptr, int len) {
   TValue tv;
   tv.type = TYPE_STRING;
@@ -174,6 +184,11 @@ char* TValue_to_string(TValue v) {
     sprintf(ret, "%Lf", TV2NUM(v));
     return ret;
   }
+  case TYPE_VAR: {
+    char* ret = malloc(20);
+    sprintf(ret, "Var@%p", (void*)&v.value.var);
+    return ret;
+  }
   case TYPE_STRING:
     return TV2STR(v);
   case TYPE_NULL:
@@ -182,4 +197,29 @@ char* TValue_to_string(TValue v) {
     return v.value.error;
   }   
   return "Unknown type";  
+}
+
+char* TValue_type_to_string(TValue v) {
+  char *ret;
+  switch(v.type) {
+  case TYPE_ERROR:
+    ret = "error";
+    break;
+  case TYPE_NULL:
+    ret = "null";
+    break;
+  case TYPE_NUMBER:
+    ret = "number";
+    break;
+  case TYPE_STRING:
+    ret = "string";
+    break;
+  case TYPE_VAR:
+    ret = "var";
+    break;
+  default:
+    ret = "(UNKNOWN)";
+    break;
+  }
+  return ret;
 }

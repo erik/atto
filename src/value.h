@@ -25,9 +25,11 @@ TValue createError(char*);
 TValue createNumber(AttoNumber);
 TValue createNull();
 TValue createString(char*, int);
+TValue createVar();
 
 TValue MathOp(int, Stack*);
 TValue BitwiseOp(int, Stack*);
 TValue ComparisonOp(int, Stack*);
 char   *TValue_to_string(TValue);
+char   *TValue_type_to_string(TValue);
 #endif /* _VALUE_H_ */

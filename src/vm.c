@@ -69,9 +69,6 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     switch(i) {
     case OP_NOP:
       DISPATCH;
-    case OP_PUSH:
-      // FIXME: This opcode should probably be removed
-      DISPATCH;
     case OP_POP:
       EXPECT_ON_STACK(1);
       pop(stack);
@@ -155,14 +152,32 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       
       if(index < 0 || index >= block->sizev) {
         ERROR("Variable index out of bounds: %d", index);
-        return createNull();
       }
 
-      block->vars[index] = pop(stack);
+      block->vars[index] = createVar(pop(stack));
 
       DEBUGF("SETVAR, index %d, value >> %s\n", index, TValue_to_string(block->vars[index]));
 
       DISPATCH;
+    }
+    case OP_VALUEVAR: {
+      EXPECT_ON_STACK(1);
+      TValue var = pop(stack);
+      
+      if(var.type != TYPE_VAR) {
+        ERROR("Expected a var, but got %s", TValue_type_to_string(var));
+      }
+      
+      Value val = *var.value.var.value;
+      AttoType type = var.value.var.type;
+
+      TValue t;
+      t.value = val;
+      t.type = type;
+      
+      push(stack, t);
+      DISPATCH;
+
     }
     case OP_PRINT: {
       EXPECT_ON_STACK(1);
