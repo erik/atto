@@ -57,7 +57,7 @@ typedef enum {
   
   /* var ops */
   OP_PUSHVAR,   // push var[++pc] on to stack
-  OP_SETVAR,    // var[++pc] = [stack]
+  OP_SETVAR,    // var at [stack] = [stack]
   OP_VALUEVAR,  // push value of var on top of stack onto stack
 
   /* IO */

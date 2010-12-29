@@ -44,6 +44,7 @@ union Value_t;
 typedef struct Var {
   union Value_t* value;
   AttoType type;
+  int index;
 } Var;
 
 typedef union Value_t {
