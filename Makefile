@@ -12,19 +12,22 @@ ARFLAGS=cq
 LIB=libatto.a
 LIBOBJ=$(OBJ)
 
-all: $(EXE)
+all: $(EXE) 
 
 $(EXE): $(OBJ)
 	@echo "link $(EXE)"
 	@$(CC) $(OBJ) $(CFLAGS) $(LNFLAGS) -o$(EXE)
 
-lib: $(LIB)
+cleanlib:
+	rm -f $(LIB)	
+
+lib: cleanlib $(LIB)
 
 $(LIB):  $(LIBOBJ)
 	@echo "ar $@"
 	@$(AR) $(ARFLAGS) $@ $(LIBOBJ)
 
-clean:
+clean: cleanlib
 	rm -f $(OBJ) $(EXE)
 
 src/block.o: src/block.c src/block.h src/atto.h src/config.h src/vec.h \

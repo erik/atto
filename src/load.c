@@ -160,7 +160,8 @@ AttoBlock* Proto_to_block(AttoVM* vm, Proto* p) {
   DEBUGF("Vars: %d\n", p->sizev);
 
   if(p->sizev > 0 ) {
-    TValue null = createNull();
+    TValue *null = malloc(sizeof(TValue));
+    *null = createNull();
     b->vars = malloc(sizeof(TValue) * p->sizev);
     
     int i;

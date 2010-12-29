@@ -146,23 +146,29 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       TValue var = block->vars[index];
       var.value.var.index = index;
 
+      block->vars[index] = var;
+
       push(stack, var);
       DISPATCH;
     }
     case OP_SETVAR: {
       EXPECT_ON_STACK(2);
       TValue var = pop(stack);
-
-     if(var.type != TYPE_VAR) {
+      
+      if(var.type != TYPE_VAR) {
         ERROR("Expected a var, but got %s", TValue_type_to_string(var));
       }
+      
+      int index = var.value.var.index;
+      
+      TValue *val = malloc(sizeof(TValue));
 
-     int index = var.value.var.index;
+      *val = pop(stack);
 
-      block->vars[index] = createVar(pop(stack));
-
+      block->vars[index] = createVar(val);
+      
       DEBUGF("SETVAR, index %d, value >> %s\n", index, TValue_to_string(block->vars[index]));
-
+      
       DISPATCH;
     }
     case OP_VALUEVAR: {
@@ -182,7 +188,6 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       
       push(stack, t);
       DISPATCH;
-
     }
     case OP_PRINT: {
       EXPECT_ON_STACK(1);

@@ -44,12 +44,12 @@ TValue createNull() {
   return tv;
 }
 
-TValue createVar(TValue value) {
+TValue createVar(TValue *tvalue) {
   TValue tv;
   Value v;
   tv.type = TYPE_VAR;
-  v.var.value = &value.value;
-  v.var.type  = value.type;
+  v.var.value = &tvalue->value;
+  v.var.type  = tvalue->type;
   tv.value = v;
   return tv;
 }
