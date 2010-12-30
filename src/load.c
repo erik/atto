@@ -115,11 +115,38 @@ static void LoadVars(LoadState *S, Proto *p) {
 }
 
 static void LoadHeader(LoadState* S) {
-  char h[HEADER_SIZE];
-  char s[HEADER_SIZE];
+  char *h = malloc(HEADER_SIZE);
+  char *s = malloc(HEADER_SIZE);
   createHeader(h);
   LoadBlock(S, s, HEADER_SIZE);
-  IF(memcmp(h, s, HEADER_SIZE), "bad header. different achitecture, or version mismatch");
+
+  int diff = memcmp(h, s, HEADER_SIZE);
+
+  if(diff) {
+    fprintf(stderr, "ERROR: Bad header: ");
+    IF(memcmp(h, s, sizeof(BYTECODE_SIGNATURE)), "wrong file signature (not Atto file?)");
+    h += sizeof(BYTECODE_SIGNATURE);
+    s += sizeof(BYTECODE_SIGNATURE);
+    
+    if(*h != *s) {
+      fprintf(stderr, "wrong version, got %X, expected %X\n", *s, *h);
+      error(S, "error");
+    }
+
+    s += 1;
+    h += 1;
+
+    if(*h != *s) {
+      fprintf(stderr, "wrong endianness, got %d, expected %d\n", *s, *h);
+      error(S, "error");
+    }
+
+    error(S, "bad header. different achitecture, or version mismatch");
+  }
+
+  free(s);
+  free(h);
+
 }
 
 static Proto* LoadProto(LoadState* S) {
