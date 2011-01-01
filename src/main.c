@@ -46,7 +46,7 @@ static int usage(void)  {
 int main(int argc, char **argv) {
   
   int i;
-   char* file = NULL;
+  char* file = NULL;
   for(i = 1; i < argc; ++i) {
     char *arg = argv[i];
     if(arg[0] == '-') {
