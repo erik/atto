@@ -157,6 +157,7 @@ TValue ComparisonOp(int opcode, Stack* stack) {
 
   AttoNumber result = 0;
 
+  // TODO: push Bools instead of Numbers
   switch(opcode) {
   case OP_EQ:
     result = arg0 == arg1 ? 1 : 0;
