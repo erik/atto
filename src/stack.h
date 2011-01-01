@@ -23,7 +23,7 @@
 #define MAX_STACK_SIZE 250
 
 typedef struct {
-  TValue values[MAX_STACK_SIZE];
+  TValue *values;
   int top;
 } Stack;
 

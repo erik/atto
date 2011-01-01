@@ -99,6 +99,9 @@ void DumpConstants(Proto *p, DumpState *d) {
     case TYPE_STRING:
       DumpString(v.value.string, d);
       break;
+    case TYPE_BOOL:
+      DumpChar(v.value.bool, d);
+      break;
     default:
       fprintf(stderr, "Unknown type: %d\n", v.type);
       break;

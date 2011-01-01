@@ -66,6 +66,15 @@ TValue createString(char* ptr, int len) {
   return tv;
 }
 
+TValue createBool(char val) {
+  TValue tv;
+  tv.type = TYPE_BOOL;
+  Value v;
+  v.bool = val;
+  tv.value = v;
+  return tv;
+}
+
 TValue MathOp(int opcode, Stack* stack) {
   TValue b = pop(stack); 
   TValue a = pop(stack); 
@@ -195,6 +204,8 @@ char* TValue_to_string(TValue v) {
     return "NULL";
   case TYPE_ERROR:
     return v.value.error;
+  case TYPE_BOOL:
+    return v.value.bool ? "TRUE" : "FALSE";
   }   
   return "Unknown type";  
 }
@@ -217,9 +228,28 @@ char* TValue_type_to_string(TValue v) {
   case TYPE_VAR:
     ret = "var";
     break;
+  case TYPE_BOOL:
+    ret = "bool";
+    break;
   default:
     ret = "(UNKNOWN)";
     break;
   }
   return ret;
+}
+
+
+int boolValue(TValue t) {
+  switch(t.type) {
+  case TYPE_ERROR:
+  case TYPE_NULL:
+    return 0;
+  case TYPE_VAR:
+  case TYPE_STRING:
+  case TYPE_NUMBER:
+    return 1;
+  case TYPE_BOOL:
+    return t.value.bool;
+  }
+  return 0;
 }

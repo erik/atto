@@ -20,6 +20,8 @@
 #include "block.h"
 #include "value.h"
 
+#include <string.h>
+
 AttoVM *AttoVMNew() {
   AttoVM* vm = malloc(sizeof(AttoVM));
   return vm;
@@ -110,7 +112,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     case OP_IF: {
       EXPECT_ON_STACK(1);
       TValue t = pop(stack);
-      if(!TV2NUM(t)) {
+      if(boolValue(t)) {
 	NEXTINST;
       }
       DISPATCH;
@@ -189,6 +191,38 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       push(stack, t);
       DISPATCH;
     }
+    case OP_BOOLVALUE: {
+      EXPECT_ON_STACK(1);
+
+      TValue tos = pop(stack);
+
+      int bool = boolValue(tos);
+      
+      push(stack, createBool(bool));
+      DISPATCH;
+    }
+    case OP_CONCAT: {
+      EXPECT_ON_STACK(2);
+      TValue top = pop(stack);
+      TValue sec = pop(stack);
+
+      if(!(top.type == TYPE_STRING && sec.type == TYPE_STRING)) {
+        ERROR("Expected two string values, but got %s and %s", TValue_type_to_string(sec),
+              TValue_type_to_string(top));
+      }
+
+      char *top_s = TV2STR(top);
+      char *sec_s = TV2STR(sec);
+        
+
+      char *str = calloc(strlen(top_s) + strlen(sec_s), sizeof(char));
+
+      strcat(str, sec_s);
+      strcat(str, top_s);
+
+      push(stack, createString(str, strlen(str)));
+      DISPATCH;
+    }
     case OP_PRINT: {
       EXPECT_ON_STACK(1);
       TValue v = pop(stack);
@@ -199,9 +233,29 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       if(v.type == TYPE_NUMBER) free(str);
       DISPATCH;
     }
+    case OP_READLINE: {
+      char *buf = malloc(BUFSIZ);
+      memset(buf, '\0', BUFSIZ);
+      if(fgets(buf, BUFSIZ, stdin) ) {
+        char *nl = strchr(buf, '\n');
+        if(nl) {
+          *nl = '\0';
+        }
+      }
+      
+      push(stack, createString(buf, strlen(buf)));
+      DISPATCH;
+
+    }
     case OP_DUMPSTACK:
       print_stack(stack);
       DISPATCH;
+    case OP_CLEARSTACK: {
+      StackDestroy(block->stack);
+      block->stack = NULL;
+      block->stack = StackNew();
+      DISPATCH;
+    }
     default:
       ERROR("Unrecognized opcode.");
     }

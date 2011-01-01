@@ -24,7 +24,8 @@ typedef enum {
   TYPE_NULL,
   TYPE_NUMBER,
   TYPE_STRING,
-  TYPE_VAR
+  TYPE_VAR,
+  TYPE_BOOL 
   //TODO: functions
   //TYPE_FUNCTION,
 } AttoType;
@@ -49,6 +50,7 @@ typedef struct Var {
 
 typedef union Value_t {
   char *error;
+  char bool;
   AttoNumber number;
   AttoString string;
   Var var;

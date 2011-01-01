@@ -101,6 +101,9 @@ static void LoadConstants(LoadState* S, Proto* f) {
     case TYPE_STRING:
       obj = LoadString(S);
       break;
+    case TYPE_BOOL:
+      obj = createBool(LoadChar(S));
+      break;
     default:
       printf("Unknown type: %d\n", type);
       error(S, "Unknown type");

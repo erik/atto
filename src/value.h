@@ -26,10 +26,14 @@ TValue createNumber(AttoNumber);
 TValue createNull();
 TValue createString(char*, int);
 TValue createVar(TValue*);
+TValue createBool(char);
 
 TValue MathOp(int, Stack*);
 TValue BitwiseOp(int, Stack*);
 TValue ComparisonOp(int, Stack*);
+
 char   *TValue_to_string(TValue);
 char   *TValue_type_to_string(TValue);
+
+int boolValue(TValue);
 #endif /* _VALUE_H_ */

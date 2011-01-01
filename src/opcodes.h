@@ -60,10 +60,19 @@ typedef enum {
   OP_SETVAR,    // var at [stack] = [stack]
   OP_VALUEVAR,  // push value of var on top of stack onto stack
 
+  /* bool ops */
+  OP_BOOLVALUE, // if boolValue[stack], push true, else false
+
+  /* string ops */
+  OP_CONCAT,    //  push a new string made of (SECOND) + (TOP)
+
   /* IO */
   OP_PRINT,
+  OP_READLINE,  // read from keyboard, push string to stack
+
   OP_DUMPSTACK, 
-  
+  OP_CLEARSTACK, 
+
   NUM_OPS        /* how many opcodes are there? */
 
 } AttoOpCodes;
@@ -76,7 +85,9 @@ typedef enum {
     "if", "jmp",				\
     "pushconst",				\
     "pushvar", "setvar", "valuevar",            \
-    "print", "dumpstack"
-
+    "boolvalue",                                \
+    "concat",                                   \
+    "print", "readline",                        \
+    "dumpstack", "clearstack"
 
 #endif /* _OPCODES_H_ */

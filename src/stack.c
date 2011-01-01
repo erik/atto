@@ -22,12 +22,12 @@
 Stack *StackNew() {
   Stack* s = malloc(sizeof(Stack));
   s->top = 0;
+  s->values = malloc(sizeof(TValue) * MAX_STACK_SIZE);
   return s;
 }
 
 void StackDestroy(Stack* s) {
   free(s);
-  // nothing to do as long as s->values is statically allocated
 }
 
 Stack *Stack_from_array(int argc, TValue* argv) {
