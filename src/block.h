@@ -27,7 +27,7 @@ typedef struct {
   int sizev;
   TValue *vars;
   Vector* code;  /* opcodes */
-  Stack* stack;
+  Stack stack;
 } AttoBlock;
 
 AttoBlock  *AttoBlockNew();

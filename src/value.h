@@ -28,6 +28,8 @@ TValue createString(char*, int);
 TValue createVar(TValue*);
 TValue createBool(char);
 
+void valueDestroy(TValue*);
+
 TValue MathOp(int, Stack*);
 TValue BitwiseOp(int, Stack*);
 TValue ComparisonOp(int, Stack*);

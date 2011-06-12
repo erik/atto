@@ -17,25 +17,26 @@
 #include "stack.h"
 #include "value.h"
 
+#include <string.h>
 #include <stdio.h>
 
-Stack *StackNew() {
-  Stack* s = malloc(sizeof(Stack));
-  s->top = 0;
-  s->values = malloc(sizeof(TValue) * MAX_STACK_SIZE);
+Stack StackNew() {
+  Stack s;
+  memset(s.values, sizeof(TValue) * MAX_STACK_SIZE, 0);
+  s.top = 0;
   return s;
 }
 
 void StackDestroy(Stack* s) {
-  free(s->values);
-  free(s);  
+  s->top = 0;
+  memset(s->values, sizeof(TValue) * MAX_STACK_SIZE, 0);
 }
 
-Stack *Stack_from_array(int argc, TValue* argv) {
-  Stack* s = StackNew();
+Stack Stack_from_array(int argc, TValue* argv) {
+  Stack s = StackNew();
   int i;
   for(i = 0; i < argc; ++i) {
-    push(s, argv[i]);
+    push(&s, argv[i]);
   }
   return s;
 }
@@ -45,7 +46,8 @@ void push(Stack* s, TValue v) {
     puts("Stack full.");
     return;
   }
-  s->values[s->top++] = v;
+  s->values[s->top] = v;
+  ++s->top;
 }
 
 TValue pop(Stack* s) {
@@ -60,16 +62,16 @@ int filled(Stack* s) {
   return s->top >= MAX_STACK_SIZE;
 }
 
-void print_stack(Stack* s) {
-  if(s->top == 0) {
+void print_stack(Stack s) {
+  if(s.top == 0) {
     puts("Stack is empty.");
     return;
   }
 
-  printf("Stack at %p:\n", (void*)s);
+  printf("Stack at %p:\n", (void*)&s);
   int i;
-  for(i = 0; i < s->top; ++i) {
-    TValue v = s->values[i];
+  for(i = 0; i < s.top; ++i) {
+    TValue v = s.values[i];
     printf("[%d]\t=>\t", i);
     switch(v.type) {
     case TYPE_NULL:

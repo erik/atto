@@ -81,7 +81,7 @@ int main(int argc, char **argv) {
   }
 
   // TODO: place argv values on stack
-  Stack* argStack = StackNew();
+  Stack argStack = StackNew();
   
   AttoVM* vm = AttoVMNew();
  
@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
   
   ProtoDestroy(p);
   
-  TValue ret = vm_interpret(vm, b, 0, 0, argStack);
+  TValue ret = vm_interpret(vm, b, 0, 0, &argStack);
 
   int status;
 
@@ -102,7 +102,7 @@ int main(int argc, char **argv) {
 
   AttoVMDestroy(vm);
   AttoBlockDestroy(b);
-  StackDestroy(argStack);
+  StackDestroy(&argStack);
 
   fclose(in);
 

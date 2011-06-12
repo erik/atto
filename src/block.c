@@ -29,7 +29,7 @@ AttoBlock *AttoBlockNew() {
 void AttoBlockDestroy(AttoBlock* b) {
   VectorDestroy(b->k);
   VectorDestroy(b->code);
-  StackDestroy(b->stack);
+  StackDestroy(&b->stack);
   if(b->vars) {
     free(b->vars);
   }

@@ -15,6 +15,7 @@
 */
 
 #include <math.h>
+#include <string.h>
 
 #include "value.h"
 
@@ -58,7 +59,8 @@ TValue createString(char* ptr, int len) {
   TValue tv;
   tv.type = TYPE_STRING;
   AttoString as;
-  as.ptr = ptr;
+  as.ptr = malloc(len);
+  memcpy(as.ptr, ptr, len);
   as.len = len;
   Value v;
   v.string = as;
@@ -73,6 +75,12 @@ TValue createBool(char val) {
   v.bool = val;
   tv.value = v;
   return tv;
+}
+
+void valueDestroy(TValue* v) {
+  if(v->type == TYPE_STRING) {
+    free(v->value.string.ptr);
+  }
 }
 
 TValue MathOp(int opcode, Stack* stack) {
