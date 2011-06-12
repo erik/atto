@@ -25,16 +25,16 @@
 
 typedef struct {
   TValue *elements;
-  int size;
-  int alloc;
+  unsigned size;
+  unsigned alloc;
 } Vector;
 
 
 Vector *VectorNew();
 void    VectorDestroy(Vector*);
-void    resizeVector(Vector*, int);
-void    setIndex(Vector*, int, TValue);
-TValue  getIndex(Vector*, int);
-int     append(Vector*, TValue);
+void    resizeVector(Vector*, unsigned);
+void    setIndex(Vector*, unsigned, TValue);
+TValue  getIndex(Vector*, unsigned);
+unsigned     append(Vector*, TValue);
 
 #endif /* _VEC_H_ */

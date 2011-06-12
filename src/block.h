@@ -33,8 +33,8 @@ typedef struct {
 AttoBlock  *AttoBlockNew();
 void        AttoBlockDestroy(AttoBlock*);
 int         AttoBlock_push_inst(AttoBlock*, Instruction);
-Instruction AttoBlock_fetch_inst(AttoBlock*, int);
+Instruction AttoBlock_fetch_inst(AttoBlock*, unsigned);
 int         AttoBlock_push_const(AttoBlock*, TValue);
-TValue      AttoBlock_fetch_const(AttoBlock*, int);
+TValue      AttoBlock_fetch_const(AttoBlock*, unsigned);
 
 #endif /* _BLOCK_H_ */

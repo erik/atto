@@ -55,7 +55,7 @@ static int LoadInt(LoadState* S) {
 static TValue LoadString(LoadState* S) {
   int i;
   int length = LoadInt(S);
-  char* ptr = malloc(length);
+  char* ptr = malloc(length + 1);
   for(i = 0; i <= length; ++i) {
     ptr[i] = LoadChar(S);
   }
@@ -118,8 +118,10 @@ static void LoadVars(LoadState *S, Proto *p) {
 }
 
 static void LoadHeader(LoadState* S) {
-  char *h = malloc(HEADER_SIZE);
-  char *s = malloc(HEADER_SIZE);
+  char *h_ = malloc(HEADER_SIZE);
+  char *s_ = malloc(HEADER_SIZE);
+  char *h = h_;
+  char *s = s_;
   createHeader(h);
   LoadBlock(S, s, HEADER_SIZE);
 
@@ -147,8 +149,8 @@ static void LoadHeader(LoadState* S) {
     error(S, "bad header. different achitecture, or version mismatch");
   }
 
-  free(s);
-  free(h);
+  free(s_);
+  free(h_);
 
 }
 
@@ -161,11 +163,10 @@ static Proto* LoadProto(LoadState* S) {
   return p;
 }
 
-Proto* AttoLoad(AttoVM* vm, AttoBlock* b, Reader r, char* name, FILE* fp) {
+Proto* AttoLoad(AttoVM* vm, Reader r, char* name, FILE* fp) {
   DEBUGF("Loading file: %s\n", name);
   LoadState s;
   s.vm = vm;
-  s.block = b;
   s.reader = r;
   s.name = name;
   s.fp = fp;
@@ -180,23 +181,25 @@ void ProtoDestroy(Proto* p) {
 }
 
 AttoBlock* Proto_to_block(AttoVM* vm, Proto* p) {
-  AttoBlock* b = AttoBlockNew(b);
-  b->k = p->k;
-  b->code = p->code;
-  b->stack = StackNew();
-  
+  AttoBlock* b = AttoBlockNew();
+  unsigned i;
+  for(i = 0; i < p->k->size; ++i) {
+    append(b->k, getIndex(p->k, i));
+  }
+  for(i = 0; i < p->code->size; ++i) {
+    append(b->code, getIndex(p->code, i));
+  }
   b->sizev = p->sizev;
   
   DEBUGF("Vars: %d\n", p->sizev);
 
   if(p->sizev > 0 ) {
-    TValue *null = malloc(sizeof(TValue));
-    *null = createNull();
+    TValue null = createNull();
     b->vars = malloc(sizeof(TValue) * p->sizev);
     
     int i;
     for( i = 0; i < p->sizev; ++i) {
-      b->vars[i] = createVar(null);
+      b->vars[i] = createVar(&null);
     }
   } else {
     b->vars = NULL;

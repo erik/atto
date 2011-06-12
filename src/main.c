@@ -84,11 +84,12 @@ int main(int argc, char **argv) {
   Stack* argStack = StackNew();
   
   AttoVM* vm = AttoVMNew();
-  AttoBlock* b = AttoBlockNew();
  
-  Proto* p = AttoLoad(vm, b, reader, file, in );
-  b = Proto_to_block(vm, p);
-
+  Proto* p = AttoLoad(vm, reader, file, in );
+  AttoBlock* b = Proto_to_block(vm, p);
+  
+  ProtoDestroy(p);
+  
   TValue ret = vm_interpret(vm, b, 0, 0, argStack);
 
   int status;
@@ -102,6 +103,8 @@ int main(int argc, char **argv) {
   AttoVMDestroy(vm);
   AttoBlockDestroy(b);
   StackDestroy(argStack);
+
+  fclose(in);
 
   return status;
 }

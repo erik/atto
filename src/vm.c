@@ -31,9 +31,9 @@ void AttoVMDestroy(AttoVM* vm) {
   free(vm);
 }
 
-#define ERROR(msg, args...) {                                           \
+#define ERROR(msg, ...) {                                           \
   char err[1024];                                                       \
-  sprintf(err, "ERROR: [%d] %s: " msg, x, op_name, ## args);            \
+  sprintf(err, "ERROR: [%d] %s: " msg, x, op_name, __VA_ARGS__);            \
   fprintf(stderr, "%s\n", err);                                         \
   return createError(msg);                                              \
   }
@@ -120,7 +120,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     case OP_JMP: {
       EXPECT_ON_STACK(1);
       long jmp = (long)TV2NUM(pop(stack));
-      if(jmp + pc_val >= max || jmp + pc_val < 0) {
+      if(jmp + pc_val >= max || jmp + (long)pc_val < 0) {
 	ERROR("Invalid jump: %ld", jmp);
       }
       pc_val += jmp;
@@ -128,7 +128,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     }
     case OP_PUSHCONST: {
       int index = TV2INST(*++pc_val);
-      if(index >= block->k->size) {
+      if(index >= (int)block->k->size) {
 	ERROR("Constant index out of bounds: %d", index);
       }
       TValue k = getIndex(block->k, index);
@@ -257,7 +257,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       DISPATCH;
     }
     default:
-      ERROR("Unrecognized opcode.");
+      ERROR("Unrecognized opcode: %d", i);
     }
   }
 

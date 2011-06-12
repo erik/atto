@@ -27,7 +27,8 @@ Stack *StackNew() {
 }
 
 void StackDestroy(Stack* s) {
-  free(s);
+  free(s->values);
+  free(s);  
 }
 
 Stack *Stack_from_array(int argc, TValue* argv) {

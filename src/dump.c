@@ -59,7 +59,7 @@ void DumpHeader(DumpState *d) {
 
 void DumpVector(Vector *vec, size_t s, DumpState *d) {
   DumpInt(vec->size, d);
-  int i;
+  unsigned i;
   for(i = 0; i < vec->size; ++i) {
     TValue v = getIndex(vec, i);
     switch(v.type) {

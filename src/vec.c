@@ -31,27 +31,19 @@ void VectorDestroy(Vector* v) {
   free(v);
 }
 
-void resizeVector(Vector* v, int size) {
-  v->alloc = size;
-  TValue *resized = realloc(v->elements, size * sizeof(TValue));
-  
-  int i;
-  for(i = 0; i < size; ++i) {
-    if (i < v->size) {
-      resized[i] = v->elements[i];
-    }
-  }
-  v->elements = resized;
+void resizeVector(Vector* v, unsigned size) {
+  v->alloc = size + 1;
+  v->elements = realloc(v->elements, (size + 1) * sizeof(TValue));
 }
 
-void setIndex(Vector *vec, int idx, TValue val) {
+void setIndex(Vector *vec, unsigned idx, TValue val) {
   if(idx >= vec->alloc) {
     resizeVector(vec, vec->alloc + (idx - vec->alloc) + VECTOR_RESIZE_STEP);
   }
   vec->elements[vec->size++] = val;
 }
 
-TValue getIndex(Vector *vec, int idx) {
+TValue getIndex(Vector *vec, unsigned idx) {
   if(idx >= vec->size) {
     puts("Error: getIndex: array index out of bounds");
     return createNull();
@@ -60,7 +52,7 @@ TValue getIndex(Vector *vec, int idx) {
   return vec->elements[idx];  
 }
 
-int append(Vector *vec, TValue val) {
+unsigned append(Vector *vec, TValue val) {
   setIndex(vec, vec->size, val);
   return vec->size;
 }

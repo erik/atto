@@ -41,13 +41,12 @@ typedef struct {
 
 typedef struct LoadState {
   AttoVM*      vm;
-  AttoBlock*   block;
   Reader       reader;
   char*        name;
   FILE*        fp;
 } LoadState;
 
-Proto*     AttoLoad(AttoVM*, AttoBlock*, Reader, char*, FILE*);
+Proto*     AttoLoad(AttoVM*, Reader, char*, FILE*);
 void       ProtoDestroy(Proto* p);
 AttoBlock* Proto_to_block(AttoVM*, Proto*);
 

@@ -30,6 +30,9 @@ void AttoBlockDestroy(AttoBlock* b) {
   VectorDestroy(b->k);
   VectorDestroy(b->code);
   StackDestroy(b->stack);
+  if(b->vars) {
+    free(b->vars);
+  }
   free(b);
 }
 
@@ -44,7 +47,7 @@ int AttoBlock_push_inst(AttoBlock* b, Instruction inst) {
   return b->code->size - 1;
 }
 
-Instruction AttoBlock_fetch_inst(AttoBlock* b, int idx) {
+Instruction AttoBlock_fetch_inst(AttoBlock* b, unsigned idx) {
   if(idx >= b->code->size) {
     puts("Error: trying to access instruction out of bounds");
     return -1;
@@ -58,7 +61,7 @@ int AttoBlock_push_const(AttoBlock* b, TValue v) {
   return b->k->size - 1;
 }
 
-TValue AttoBlock_fetch_const(AttoBlock* b, int idx) {
+TValue AttoBlock_fetch_const(AttoBlock* b, unsigned idx) {
   if(idx >= b->k->size) {
     puts("Error: trying to access constant out of bounds");
     return createNull();
