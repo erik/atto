@@ -55,13 +55,14 @@ TValue createVar(TValue *tvalue) {
   return tv;
 }
 
-TValue createString(char* ptr, int len) {
+TValue createString(char* ptr, int len, int con) {
   TValue tv;
   tv.type = TYPE_STRING;
   AttoString as;
   as.ptr = calloc(len + 1, sizeof(char));
   memcpy(as.ptr, ptr, len);
   as.len = len;
+  as.constant = con;
   Value v;
   v.string = as;
   tv.value = v;
@@ -78,9 +79,13 @@ TValue createBool(char val) {
 }
 
 void valueDestroy(TValue* v) {
-  if(v->type == TYPE_STRING) {
-    // can't free everything, or constants get freed and the world explodes.
-    //    free(v->value.string.ptr);
+  valueDestroy2(v, 0);
+}
+
+void valueDestroy2(TValue* v, int delConst) {
+  if(v->type == TYPE_STRING && (!v->value.string.constant || delConst)) {
+    free(v->value.string.ptr);
+    v->value.string.ptr = NULL;
   }
 }
 

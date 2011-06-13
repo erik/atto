@@ -31,6 +31,14 @@ void VectorDestroy(Vector* v) {
   free(v);
 }
 
+void VectorDestroy2(Vector* v, int delConsts) {
+  unsigned i;
+  for(i = 0; i < v->size; ++i) {
+    valueDestroy2(&v->elements[i], 1);
+  }
+  VectorDestroy(v);
+}
+
 void resizeVector(Vector* v, unsigned size) {
   v->alloc = size + 1;
   v->elements = realloc(v->elements, (size + 1) * sizeof(TValue));

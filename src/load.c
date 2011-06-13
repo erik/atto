@@ -60,7 +60,7 @@ static TValue LoadString(LoadState* S) {
     ptr[i] = LoadChar(S);
   }
 
-  return createString(ptr, length);
+  return createString(ptr, length, 1);
 }
 
 static AttoNumber LoadNumber(LoadState* S) {

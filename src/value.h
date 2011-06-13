@@ -24,11 +24,12 @@
 TValue createError(char*);
 TValue createNumber(AttoNumber);
 TValue createNull();
-TValue createString(char*, int);
+TValue createString(char*, int, int);
 TValue createVar(TValue*);
 TValue createBool(char);
 
 void valueDestroy(TValue*);
+void valueDestroy2(TValue*, int);
 
 TValue MathOp(int, Stack*);
 TValue BitwiseOp(int, Stack*);

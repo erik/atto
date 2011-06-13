@@ -226,7 +226,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       valueDestroy(&top);
       valueDestroy(&sec);
 
-      push(&stack, createString(str, strlen(str)));
+      push(&stack, createString(str, strlen(str), 0));
       free(str);
       DISPATCH;
     }
@@ -252,7 +252,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       }
       
       unsigned len = strlen(buf) + 1;      
-      push(&stack, createString(buf, len));
+      push(&stack, createString(buf, len, 0));
       
       free(buf);      
       DISPATCH;

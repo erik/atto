@@ -31,6 +31,7 @@ typedef enum {
 } AttoType;
 
 typedef struct {
+  int constant; // if a constant, don't free it
   char *ptr;
   int len;
 } AttoString;

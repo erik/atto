@@ -32,6 +32,7 @@ typedef struct {
 
 Vector *VectorNew();
 void    VectorDestroy(Vector*);
+void    VectorDestroy2(Vector* v, int delConsts);
 void    resizeVector(Vector*, unsigned);
 void    setIndex(Vector*, unsigned, TValue);
 TValue  getIndex(Vector*, unsigned);
