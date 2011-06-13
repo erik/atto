@@ -59,7 +59,7 @@ TValue createString(char* ptr, int len) {
   TValue tv;
   tv.type = TYPE_STRING;
   AttoString as;
-  as.ptr = malloc(len);
+  as.ptr = calloc(len + 1, sizeof(char));
   memcpy(as.ptr, ptr, len);
   as.len = len;
   Value v;
@@ -79,7 +79,8 @@ TValue createBool(char val) {
 
 void valueDestroy(TValue* v) {
   if(v->type == TYPE_STRING) {
-    free(v->value.string.ptr);
+    // can't free everything, or constants get freed and the world explodes.
+    //    free(v->value.string.ptr);
   }
 }
 
