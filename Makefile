@@ -1,5 +1,5 @@
 CSRC := $(shell find src -name "*.c")
-CHDR := $(shell find src -name "*.h")
+CHDR := $(shell find include -name "*.h")
 
 COBJ := $(CSRC:.c=.o)
 
