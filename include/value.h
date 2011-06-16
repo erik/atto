@@ -15,9 +15,9 @@ TValue createBool(char);
 void valueDestroy(TValue*);
 void valueDestroy2(TValue*, int);
 
-TValue MathOp(int, Stack*);
-TValue BitwiseOp(int, Stack*);
-TValue ComparisonOp(int, Stack*);
+TValue MathOp(int, TValue, TValue);
+TValue BitwiseOp(int, TValue, TValue);
+TValue ComparisonOp(int, TValue, TValue);
 
 char   *TValue_to_string(TValue);
 char   *TValue_type_to_string(TValue);

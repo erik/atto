@@ -12,9 +12,16 @@ CFLAGS := -Wall -Wextra -pedantic -std=c99 -Iinclude/ -Wno-unused-parameter -O2
 LNFLAGS := -lm
 EXE := atto
 
+TESTOBJ := $(shell find src/ \( -name "*.o" -and -not -name "main.o" \))
+TESTEXE := tester
+
 ####
 
 all: $(COBJ) $(EXE)
+
+test: $(TESTOBJ)
+	$(CC) $(CFLAGS) $(TESTOBJ) $(LNFLAGS) -DUNIT_TEST src/tester.c -o $(TESTEXE)
+	./tester
 
 $(EXE): $(COBJ)
 	@ echo "  LINK" $(EXE)

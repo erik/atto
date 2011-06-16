@@ -5,6 +5,7 @@
 
 TValue createError(char* msg) {
   TValue tv;
+  tv.type = TYPE_ERROR;
   Value v;
   v.error = msg;
   tv.value = v;
@@ -73,10 +74,7 @@ void valueDestroy2(TValue* v, int delConst) {
   }
 }
 
-TValue MathOp(int opcode, Stack* stack) {
-  TValue b = pop(stack); 
-  TValue a = pop(stack); 
-  
+TValue MathOp(int opcode, TValue a, TValue b) {  
   AttoNumber arg0 = TV2NUM(a);
   AttoNumber arg1 = TV2NUM(b);
 
@@ -113,15 +111,10 @@ TValue MathOp(int opcode, Stack* stack) {
     puts("Unrecognized opcode");
     return createNull();
   }
-  a = createNumber(result);
-  push(stack, a);
-  return a;
+  return createNumber(result);
 }
 
-TValue BitwiseOp(int opcode, Stack* stack) {
-  TValue b = pop(stack); 
-  TValue a = pop(stack); 
-  
+TValue BitwiseOp(int opcode, TValue a, TValue b) {  
   long arg0 = (long)TV2NUM(a);
   long arg1 = (long)TV2NUM(b);
 
@@ -141,15 +134,10 @@ TValue BitwiseOp(int opcode, Stack* stack) {
     puts("Unrecognized opcode");
     return createNull();
   }
-  a = createNumber(result);
-  push(stack, a);
-  return a;
+  return createNumber(result);
 }
 
-TValue ComparisonOp(int opcode, Stack* stack) {
-  TValue b = pop(stack); 
-  TValue a = pop(stack); 
-  
+TValue ComparisonOp(int opcode, TValue a, TValue b) {  
   AttoNumber arg0 = TV2NUM(a);
   AttoNumber arg1 = TV2NUM(b);
 
@@ -180,9 +168,7 @@ TValue ComparisonOp(int opcode, Stack* stack) {
     return createNull();
   }
 
-  a = createNumber(result);
-  push(stack, a);
-  return a;
+  return createBool(result);
 }
 
 char* TValue_to_string(TValue v) {

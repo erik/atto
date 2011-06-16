@@ -15,18 +15,18 @@ void AttoVMDestroy(AttoVM* vm) {
   free(vm);
 }
 
-#define ERROR(msg, ...) {                                           \
-  char err[1024];                                                       \
-  sprintf(err, "ERROR: [%d] %s: " msg, x, op_name, __VA_ARGS__);            \
-  fprintf(stderr, "%s\n", err);                                         \
-  return createError(msg);                                              \
+#define ERROR(msg, ...) {                                               \
+    char err[1024];                                                     \
+    sprintf(err, "ERROR: [%d] %s: " msg, x, op_name, __VA_ARGS__);      \
+    fprintf(stderr, "%s\n", err);                                       \
+    return createError(msg);                                            \
   }
 
 
-#define EXPECT_ON_STACK(num) if(stack.top < num) {                     \
+#define EXPECT_ON_STACK(num) if(stack->top < num) {                     \
     ERROR("Expected at least %d elements"				\
           " on the stack, but only %d found!\n",                        \
-          num, stack.top );						\
+          num, stack->top );						\
   }
 
 #define NEXTINST { i = TV2INST(*++pc_val); }
@@ -38,7 +38,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
   TValue* max          = (TValue*)(block->code->elements + start + block->code->size);
   TValue *pc_val       = (TValue*)(block->code->elements + start);
   Instruction i        = TV2INST(*pc_val);
-  Stack stack          = block->stack;
+  Stack *stack         = &block->stack;
   const char* opcode_names[] = { OPCODE_NAMES };
   const char* op_name = NULL;
 
@@ -57,46 +57,64 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       DISPATCH;
     case OP_POP:
       EXPECT_ON_STACK(1);
-      TValue v = pop(&stack);
+      TValue v = pop(stack);
       valueDestroy(&v);
       DISPATCH;
     case OP_DUP: {
       EXPECT_ON_STACK(1);
-      TValue v = pop(&stack);
-      push(&stack, v);
-      push(&stack, v);
+      TValue v = pop(stack);
+      push(stack, v);
+      push(stack, v);
       DISPATCH;   
     }   
     case OP_SWAP: {
       EXPECT_ON_STACK(2);
-      TValue f = pop(&stack);
-      TValue s = pop(&stack);
-      push(&stack, f);
-      push(&stack, s);
+      TValue f = pop(stack);
+      TValue s = pop(stack);
+      push(stack, f);
+      push(stack, s);
       DISPATCH;
     }
     case OP_ADD: case OP_SUB: case OP_MUL:
-    case OP_DIV: case OP_MOD: case OP_POW:
+    case OP_DIV: case OP_MOD: case OP_POW: {
       EXPECT_ON_STACK(2);
-      MathOp(i, &stack);
+      TValue b = pop(stack);
+      TValue a = pop(stack);
+      TValue res = MathOp(i, a, b);
+      
+      push(stack, res);
+
       DISPATCH;
-    case OP_OR: case OP_AND: case OP_XOR:
+    }
+    case OP_OR: case OP_AND: case OP_XOR: {
       EXPECT_ON_STACK(2);
-      BitwiseOp(i, &stack);
+      TValue b = pop(stack);
+      TValue a = pop(stack);
+      TValue res = BitwiseOp(i, a, b);
+
+      push(stack, res);
+
       DISPATCH;
+    }
     case OP_NOT:
       EXPECT_ON_STACK(1);
-      TValue a = pop(&stack);
-      push(&stack, createNumber(~(long)TV2NUM(a)));
+      TValue a = pop(stack);
+      push(stack, createNumber(~(long)TV2NUM(a)));
       DISPATCH;
     case OP_EQ: case OP_LT: case OP_GT:
-    case OP_LTE: case OP_GTE: case OP_CMP:
+    case OP_LTE: case OP_GTE: case OP_CMP: {
       EXPECT_ON_STACK(2);
-      ComparisonOp(i, &stack);
+      TValue b = pop(stack);
+      TValue a = pop(stack);
+      TValue res = ComparisonOp(i, a, b);
+      
+      push(stack, res);
+      
       DISPATCH;
+    }
     case OP_IF: {
       EXPECT_ON_STACK(1);
-      TValue t = pop(&stack);
+      TValue t = pop(stack);
       if(boolValue(t)) {
 	NEXTINST;
       }
@@ -104,7 +122,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     }
     case OP_JMP: {
       EXPECT_ON_STACK(1);
-      long jmp = (long)TV2NUM(pop(&stack));
+      long jmp = (long)TV2NUM(pop(stack));
       if(jmp + pc_val >= max || jmp + (long)pc_val < 0) {
 	ERROR("Invalid jump: %ld", jmp);
       }
@@ -118,7 +136,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       }
       TValue k = getIndex(block->k, index);
 
-      push(&stack, k);
+      push(stack, k);
       DISPATCH;
     }
     case OP_PUSHVAR: {
@@ -135,12 +153,12 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
 
       block->vars[index] = var;
 
-      push(&stack, var);
+      push(stack, var);
       DISPATCH;
     }
     case OP_SETVAR: {
       EXPECT_ON_STACK(2);
-      TValue var = pop(&stack);
+      TValue var = pop(stack);
       
       if(var.type != TYPE_VAR) {
         ERROR("Expected a var, but got %s", TValue_type_to_string(var));
@@ -150,7 +168,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       
       TValue *val = malloc(sizeof(TValue));
 
-      *val = pop(&stack);
+      *val = pop(stack);
 
       block->vars[index] = createVar(val);
       
@@ -160,7 +178,7 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
     }
     case OP_VALUEVAR: {
       EXPECT_ON_STACK(1);
-      TValue var = pop(&stack);
+      TValue var = pop(stack);
       
       if(var.type != TYPE_VAR) {
         ERROR("Expected a var, but got %s", TValue_type_to_string(var));
@@ -173,25 +191,25 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       t.value = val;
       t.type = type;
             
-      push(&stack, t);
+      push(stack, t);
       DISPATCH;
     }
     case OP_BOOLVALUE: {
       EXPECT_ON_STACK(1);
 
-      TValue tos = pop(&stack);
+      TValue tos = pop(stack);
 
       int bool = boolValue(tos);
       
       valueDestroy(&tos);
       
-      push(&stack, createBool(bool));
+      push(stack, createBool(bool));
       DISPATCH;
     }
     case OP_CONCAT: {
       EXPECT_ON_STACK(2);
-      TValue top = pop(&stack);
-      TValue sec = pop(&stack);
+      TValue top = pop(stack);
+      TValue sec = pop(stack);
 
       if(!(top.type == TYPE_STRING && sec.type == TYPE_STRING)) {
         ERROR("Expected two string values, but got %s and %s", TValue_type_to_string(sec),
@@ -210,13 +228,13 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       valueDestroy(&top);
       valueDestroy(&sec);
 
-      push(&stack, createString(str, strlen(str), 0));
+      push(stack, createString(str, strlen(str), 0));
       free(str);
       DISPATCH;
     }
     case OP_PRINT: {
       EXPECT_ON_STACK(1);
-      TValue v = pop(&stack);
+      TValue v = pop(stack);
       char *str = TValue_to_string(v);
 
       printf("%s", str);
@@ -236,19 +254,19 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       }
       
       unsigned len = strlen(buf) + 1;      
-      push(&stack, createString(buf, len, 0));
+      push(stack, createString(buf, len, 0));
       
       free(buf);      
       DISPATCH;
     }
     case OP_DUMPSTACK:
-      print_stack(stack);
+      print_stack(*stack);
       DISPATCH;
       
     case OP_CLEARSTACK: {
       Stack s = StackNew();
       StackDestroy(&block->stack);
-      stack = s;
+      *stack = s;
       DISPATCH;
     }
     default:
