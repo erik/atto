@@ -12,7 +12,6 @@
 #include "atto.h"
 #include "value.h"
 
-
 #define INIT_TEST_OBJ                           \
   AttoVM* vm = AttoVMNew();                     \
   AttoBlock* b = AttoBlockNew();                \
@@ -159,12 +158,113 @@ int test_bitwise() {
   PASS;
 }
 
+int test_comparison() {
+  INIT_TEST_OBJ;
+
+  push(&b->stack, createNumber(0));
+  push(&b->stack, createNumber(1));
+  ADD_OP(EQ);
+  INTERP;
+  ASSERT(b->stack.top == 1);
+  ASSERT(b->stack.values[0].value.bool == 0);
+
+  RESET_TEST_OBJ;
+
+  push(&b->stack, createNumber(1456));
+  push(&b->stack, createNumber(1456));
+  ADD_OP(EQ);
+  INTERP;
+  ASSERT(b->stack.top == 1);
+  ASSERT(b->stack.values[0].value.bool == 1);
+
+  RESET_TEST_OBJ;
+
+  // 0 10 < => true
+  push(&b->stack, createNumber(0));
+  push(&b->stack, createNumber(10));
+
+  ADD_OP(LT);
+  
+  INTERP;
+
+  ASSERT(b->stack.top == 1);
+  ASSERT(b->stack.values[0].value.bool == 1);
+
+  RESET_TEST_OBJ;
+
+  // 0 10 > => false
+  push(&b->stack, createNumber(0));
+  push(&b->stack, createNumber(10));
+
+  ADD_OP(GT);
+  
+  INTERP;
+
+  ASSERT(b->stack.top == 1);
+  ASSERT(b->stack.values[0].value.bool == 0);
+
+  RESET_TEST_OBJ;
+
+  push(&b->stack, createNumber(0));
+  push(&b->stack, createNumber(1));
+
+  ADD_OP(CMP);
+
+  INTERP;
+
+  ASSERT(b->stack.top == 1);
+  ASSERT(TV2NUM(b->stack.values[0]) == -1.0);
+
+  PASS;
+}
+
+int test_constants() {
+  INIT_TEST_OBJ;
+
+  AttoBlock_push_const(b, createString("0123", 4, 1));
+
+  ADD_OP(PUSHCONST);
+  AttoBlock_push_inst(b,0); // const index
+
+  INTERP;
+
+  ASSERT(b->stack.top == 1);
+  ASSERT(b->stack.values[0].type == TYPE_STRING &&
+         strcmp(b->stack.values[0].value.string.ptr, "0123") == 0);
+
+
+  PASS;
+}
+
+int test_stack2() {
+  INIT_TEST_OBJ;
+
+  int i;
+  for(i = 0; i < 100; ++i) {
+    push(&b->stack, createNumber(i));
+  }
+  
+  ASSERT(b->stack.top == 100);
+
+  ADD_OP(CLEARSTACK);
+
+  INTERP;
+  
+  ASSERT(b->stack.top == 0);
+  
+  PASS;    
+}
+
 int main(int argc, char** argv) {
-  TEST(nop, "the ability of NOP to do nothing");
-  TEST(stack, "basic stack operations");
-  TEST(math, "mathematical operations");
-  TEST(bitwise, "bitwise operations");
-  //TODO: finish writing tests
+
+  TEST(nop,        "the ability of NOP to do nothing");
+  TEST(stack,      "basic stack operations");
+  TEST(math,       "mathematical operations");
+  TEST(bitwise,    "bitwise operations");
+  TEST(comparison, "comparison operations");
+  TEST(constants,  "constants");
+  TEST(stack2,     "other stack operations");
+
 }
 
 #endif /* UNIT_TEST */

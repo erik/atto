@@ -132,7 +132,7 @@ TValue BitwiseOp(int opcode, TValue a, TValue b) {
     break;
   default:
     puts("Unrecognized opcode");
-    return createNull();
+    return createError("Unrecognized opcode");
   }
   return createNumber(result);
 }
@@ -143,7 +143,8 @@ TValue ComparisonOp(int opcode, TValue a, TValue b) {
 
   AttoNumber result = 0;
 
-  // TODO: push Bools instead of Numbers
+  // TODO: Do actual comparison instead of comparing floating points
+  // so everything can be compared instead of just number
   switch(opcode) {
   case OP_EQ:
     result = arg0 == arg1 ? 1 : 0;
@@ -168,7 +169,11 @@ TValue ComparisonOp(int opcode, TValue a, TValue b) {
     return createNull();
   }
 
-  return createBool(result);
+  if(opcode == OP_CMP) {
+    return createNumber(result);
+  } else {
+    return createBool(result);
+  }
 }
 
 char* TValue_to_string(TValue v) {

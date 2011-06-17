@@ -96,11 +96,12 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
 
       DISPATCH;
     }
-    case OP_NOT:
+    case OP_NOT: {
       EXPECT_ON_STACK(1);
       TValue a = pop(stack);
       push(stack, createNumber(~(long)TV2NUM(a)));
       DISPATCH;
+    }
     case OP_EQ: case OP_LT: case OP_GT:
     case OP_LTE: case OP_GTE: case OP_CMP: {
       EXPECT_ON_STACK(2);

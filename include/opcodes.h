@@ -26,11 +26,11 @@ typedef enum {
 
   /* comparison ops */
   OP_EQ,
-  OP_LT,
-  OP_GT,
+  OP_LT,        // push true if top - 1 < top, false otherwise
+  OP_GT,        // push true if top -1 > top, false otherwise
   OP_LTE,
   OP_GTE,
-  OP_CMP,
+  OP_CMP,       // push -1 if top -1 < top, 0 if equal, 1 otherwise
 
   /* flow of control ops */
   OP_IF,        // if [stack], exec next inst, otherwise skip
@@ -54,6 +54,7 @@ typedef enum {
   OP_PRINT,
   OP_READLINE,  // read from keyboard, push string to stack
 
+  /* stack ops */
   OP_DUMPSTACK, 
   OP_CLEARSTACK, 
 
