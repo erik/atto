@@ -39,6 +39,8 @@ Complete opcode listing:
           OP_READLINE,  
           OP_DUMPSTACK, 
           OP_CLEARSTACK, 
+          OP_CALL,
+          OP_RETURN
 
 ##Opcode Listing
 
@@ -144,3 +146,11 @@ fine)
 Prints the values of each element of the stack
 ####CLEARSTACK
 Empties out the stack
+
+###Function Ops
+####CALL
+Calls the function located on top of the stack. Expects a number to be
+second from top on stack, which is the number of arguments to pass to
+the given function.
+####RETURN
+Returns the top of the stack from a function to its calling function.

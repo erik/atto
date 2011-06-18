@@ -39,10 +39,11 @@ For each constant, the type of the constant is dumped first as a byte,
 followed by the representation of constant. The types constants can
 have are:
 
-- TYPE_NULL   : 1
-- TYPE_NUMBER : 2
-- TYPE_STRING : 3 
-- TYPE_BOOL   : 5
+- TYPE_NULL     : 1
+- TYPE_NUMBER   : 2
+- TYPE_STRING   : 3 
+- TYPE_BOOL     : 5
+- TYPE_FUNCTION : 6
 
 Following this are the actual encodings of the constants. 
 ####Null
@@ -58,6 +59,10 @@ trailing '\0'
 A single byte is dumped to the file, technically can be any value that
 can fit into a char, but should ideally be 0 or 1 to represent false
 and true.
+
+####Function
+Size of code is dumped as an int, followed by each of the instructions
+to perform.
 
 ###Vars
 Since vars are set and accessed from the code itself, the only thing

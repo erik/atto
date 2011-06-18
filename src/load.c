@@ -64,6 +64,18 @@ static void LoadCode(LoadState* S, Proto* f) {
   }
 }
 
+static TValue LoadFunction(LoadState* S) {
+  int size = LoadInt(S);
+  AttoBlock* b = AttoBlockNew();
+  int i;
+  for(i = 0; i < size; ++i) {
+    AttoNumber inst = LoadNumber(S);
+    AttoBlock_push_inst(b, inst);
+  }
+
+  return createFunction(b);
+}
+
 static void LoadConstants(LoadState* S, Proto* f) {
   int sizek = LoadInt(S);
   DEBUGF("sizek => %d\n", sizek);
@@ -87,6 +99,9 @@ static void LoadConstants(LoadState* S, Proto* f) {
       break;
     case TYPE_BOOL:
       obj = createBool(LoadChar(S));
+      break;
+    case TYPE_FUNCTION:
+      obj = LoadFunction(S);
       break;
     default:
       printf("Unknown type: %d\n", type);

@@ -27,6 +27,8 @@ void DumpString(AttoString s, DumpState *d) {
   }
 }
 
+void DumpCode(Proto*, DumpState*);
+
 void createHeader(char* h) {
   int x = 1;
   memcpy(h, BYTECODE_SIGNATURE, sizeof(BYTECODE_SIGNATURE));
@@ -86,6 +88,12 @@ void DumpConstants(Proto *p, DumpState *d) {
     case TYPE_BOOL:
       DumpChar(v.value.bool, d);
       break;
+    case TYPE_FUNCTION: {
+      Proto* x = Proto_from_block(d->vm, v.value.function.b);
+      DumpCode(x, d);
+      ProtoDestroy(x);
+      break;
+    }
     default:
       fprintf(stderr, "Unknown type: %d\n", v.type);
       break;
@@ -113,9 +121,16 @@ void DumpCode(Proto* p, DumpState *d) {
 Proto* Proto_from_block(AttoVM* vm, AttoBlock *b) {
   UNUSED(vm);
   Proto* p = malloc(sizeof(Proto));
+  p->k = VectorNew();
+  p->code = VectorNew();
   p->source = "lOl";
-  p->k = b->k;
-  p->code = b->code;
+  unsigned i;
+  for(i = 0; i < b->k->size; ++i) {
+    append(p->k, getIndex(b->k, i));
+  }
+  for(i = 0; i < b->code->size; ++i) {
+    append(p->code, getIndex(b->code, i));
+  }
   p->sizev = b->sizev;
   return p;
 }

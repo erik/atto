@@ -12,6 +12,8 @@
 #include "opcodes.h"
 #include "atto.h"
 #include "value.h"
+#include "load.h"
+#include "dump.h"
 
 #define INIT_TEST_OBJ                           \
   AttoVM* vm = AttoVMNew();                     \
@@ -262,24 +264,102 @@ int test_functions() {
 
   TValue tf = createFunction(add);
 
+  AttoBlock_push_const(b, tf);
+
+  // arguments to pass
   push(&b->stack, createNumber(3));
   push(&b->stack, createNumber(2));
 
+  // number of arguments
   push(&b->stack, createNumber(2));
-  push(&b->stack, tf);
+
+  // load the function from the constant index
+  ADD_OP(PUSHCONST);
+  AttoBlock_push_inst(b, 0);
 
   ADD_OP(CALL);
 
   INTERP;
   
   ASSERT(b->stack.top == 1);
-  ASSERT(TV2NUM(b->stack.values[0]) == 5);
+  ASSERT(TV2NUM(b->stack.values[0]) == 5.0);
 
   AttoBlockDestroy(add);
 
   PASS;
 }
 
+// helper funcs for test_dump_load
+static int reader(LoadState* S, unsigned char* b, size_t size) {
+  size_t i;
+  for (i = 0; i < size; ++i) {
+    int c = fgetc(S->fp);
+    b[i] = c;
+  }
+  return i;
+}
+
+static int writer(AttoVM* vm, const void *p, size_t s, void *d) {
+  UNUSED(vm);
+  return (fwrite(p, s, 1, (FILE*)d) != 1) && (s != 0);
+}
+
+int test_dump_load() {
+  INIT_TEST_OBJ;
+
+  FILE* f = (FILE*)tmpfile();
+  
+  /* set up block */
+  AttoBlock* add = AttoBlockNew();
+  AttoBlock_push_inst(add, OP_ADD);
+  AttoBlock_push_inst(add, OP_RETURN);
+
+  AttoBlock_push_const(b, createFunction(add));
+  
+  AttoBlock_push_const(b, createNumber(4)); // 1
+  AttoBlock_push_const(b, createNumber(5)); // 2
+  AttoBlock_push_const(b, createNumber(2)); // 3
+
+  ADD_OP(PUSHCONST);
+  AttoBlock_push_inst(b, 1);
+  
+  ADD_OP(PUSHCONST);
+  AttoBlock_push_inst(b, 2);
+
+  ADD_OP(PUSHCONST);
+  AttoBlock_push_inst(b, 3);
+
+  ADD_OP(PUSHCONST);
+  AttoBlock_push_inst(b, 0);
+
+  ADD_OP(CALL);
+  ADD_OP(RETURN);
+
+  Proto* p = Proto_from_block(vm, b);
+  dump(vm, p, writer, f);
+  ProtoDestroy(p);
+  AttoBlockDestroy(add);
+
+  fflush(f);
+  fseek(f, 0L, SEEK_SET); 
+
+  Proto* p1 = AttoLoad(vm, reader, "FILENAME", f);
+  AttoBlock* b1 = Proto_to_block(vm, p1);
+  ProtoDestroy(p1);
+
+  TValue r = vm_interpret(vm, b1, 0, 0);
+  AttoBlockDestroy(b1->k->elements[0].value.function.b);
+  AttoBlockDestroy(b1);
+
+  ASSERT(r.type == TYPE_NUMBER);
+  ASSERT(TV2NUM(r) == 9.0);
+
+  fclose(f);
+
+  DEINIT_TEST_OBJ;
+
+  return 0;
+}
 
 int main(int argc, char** argv) {
 
@@ -291,6 +371,7 @@ int main(int argc, char** argv) {
   TEST(constants,  "constants");
   TEST(stack2,     "other stack operations");
   TEST(functions,  "functions");
+  TEST(dump_load,  "dumping and loading bytecode from a file");
 
 }
 
