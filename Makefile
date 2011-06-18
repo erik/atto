@@ -20,7 +20,7 @@ TESTEXE := tester
 all: $(COBJ) $(EXE)
 
 test: $(TESTOBJ)
-	$(CC) $(CFLAGS) $(TESTOBJ) $(LNFLAGS) -DUNIT_TEST src/tester.c -o $(TESTEXE)
+	$(CC) $(CFLAGS) $(TESTOBJ) $(LNFLAGS) -g -O0 -DDEBUG -DUNIT_TEST src/tester.c -o $(TESTEXE)
 	./tester
 
 $(EXE): $(COBJ)
@@ -41,7 +41,7 @@ $(LIB):  $(LIBOBJ)
 	@ $(CC) $(CFLAGS) -c $< -o $@
 
 debug:
-	@$(MAKE) "CFLAGS=$(CFLAGS) -g -O0"
+	@$(MAKE) "CFLAGS=$(CFLAGS) -g -O0 -DDEBUG"
 
 gcc:
 	@$(MAKE) "CC=gcc"

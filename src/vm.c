@@ -18,22 +18,22 @@ void AttoVMDestroy(AttoVM* vm) {
 #define ERROR(msg, ...) {                                               \
     char err[1024];                                                     \
     sprintf(err, "ERROR: [%d] %s: " msg, x, op_name, __VA_ARGS__);      \
-    fprintf(stderr, "%s\n", err);                                       \
-    return createError(msg);                                            \
+    /*    fprintf(stderr, "%s\n", err); */                              \
+    return createError(err);                                            \
   }
 
 
 #define EXPECT_ON_STACK(num) if(stack->top < num) {                     \
     ERROR("Expected at least %d elements"				\
-          " on the stack, but only %d found!\n",                        \
-          num, stack->top );						\
+          " on the stack, but only %d found! (%d)\n",                   \
+          num, stack->top, __LINE__ );                                  \
   }
 
 #define NEXTINST { i = TV2INST(*++pc_val); }
 #define DISPATCH NEXTINST; break
 
-TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* argv) {
-  DEBUGLN("Interpret block");
+TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc) {
+  DEBUGF("Interpret block: %d ops\n", block->code->size);
   int error            = 0;
   TValue* max          = (TValue*)(block->code->elements + start + block->code->size);
   TValue *pc_val       = (TValue*)(block->code->elements + start);
@@ -268,6 +268,50 @@ TValue vm_interpret(AttoVM* vm, AttoBlock* block, int start, int argc, Stack* ar
       Stack s = StackNew();
       StackDestroy(&block->stack);
       *stack = s;
+      DISPATCH;
+    }
+    case OP_CALL: {
+      EXPECT_ON_STACK(2);
+      TValue fcn = pop(stack);
+      TValue num = pop(stack);
+
+      // FIXME: this explodes when types aren't right :(
+      if(fcn.type != TYPE_FUNCTION || num.type != TYPE_NUMBER) {
+        ERROR("Expected function and numeric values, but got %s and %s", TValue_type_to_string(fcn),
+              TValue_type_to_string(num));
+      }
+
+      int nargs = (int)TV2NUM(num);
+
+      EXPECT_ON_STACK(nargs);
+
+      int j;
+      for(j = 0; j < nargs; ++j) {
+        TValue v = pop(stack);
+        push(&fcn.value.function.b->stack, v);
+      }
+
+      TValue ret = vm_interpret(vm, fcn.value.function.b, 0, nargs);
+
+      if(ret.type != TYPE_NULL) {
+        push(stack, ret);
+      }
+
+      valueDestroy(&fcn);
+      valueDestroy(&num);
+      valueDestroy(&fcn);
+      
+      DISPATCH;
+    }
+    case OP_RETURN: {
+      EXPECT_ON_STACK(1);
+
+      TValue ret = pop(stack);
+
+      DEBUGF("Finished block, returning with %s\n", TValue_to_string(ret));
+
+      return ret;
+      
       DISPATCH;
     }
     default:

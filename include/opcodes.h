@@ -58,6 +58,11 @@ typedef enum {
   OP_DUMPSTACK, 
   OP_CLEARSTACK, 
 
+  /* function ops */
+  OP_CALL,     // calls a function located on top of the stack, popping top - 1
+               // values onto its argument stack
+  OP_RETURN,   // return the top of the stack to the calling function.
+
   NUM_OPS        /* how many opcodes are there? */
 
 } AttoOpCodes;
@@ -73,6 +78,7 @@ typedef enum {
     "boolvalue",                                \
     "concat",                                   \
     "print", "readline",                        \
-    "dumpstack", "clearstack"
+    "dumpstack", "clearstack",                  \
+    "call", "return"
 
 #endif /* _OPCODES_H_ */

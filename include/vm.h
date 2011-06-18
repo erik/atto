@@ -10,5 +10,5 @@ typedef struct {
 
 AttoVM *AttoVMNew();
 void    AttoVMDestroy(AttoVM*);
-TValue  vm_interpret(AttoVM*, AttoBlock*, int, int, Stack*);
+TValue  vm_interpret(AttoVM*, AttoBlock*, int, int);
 #endif /* _VM_H_ */

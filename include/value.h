@@ -11,6 +11,7 @@ TValue createNull();
 TValue createString(char*, int, int);
 TValue createVar(TValue*);
 TValue createBool(char);
+TValue createFunction(struct AttoBlock* b);
 
 void valueDestroy(TValue*);
 void valueDestroy2(TValue*, int);

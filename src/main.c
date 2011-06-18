@@ -63,9 +63,6 @@ int main(int argc, char **argv) {
     fprintf(stderr, "%s: no such file\n", file);
     return 1;
   }
-
-  // TODO: place argv values on stack
-  Stack argStack = StackNew();
   
   AttoVM* vm = AttoVMNew();
  
@@ -74,7 +71,7 @@ int main(int argc, char **argv) {
   
   ProtoDestroy(p);
   
-  TValue ret = vm_interpret(vm, b, 0, 0, &argStack);
+  TValue ret = vm_interpret(vm, b, 0, 0);
 
   int status;
 
@@ -86,7 +83,6 @@ int main(int argc, char **argv) {
 
   AttoVMDestroy(vm);
   AttoBlockDestroy(b);
-  StackDestroy(&argStack);
 
   fclose(in);
 

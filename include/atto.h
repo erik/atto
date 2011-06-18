@@ -9,9 +9,8 @@ typedef enum {
   TYPE_NUMBER,
   TYPE_STRING,
   TYPE_VAR,
-  TYPE_BOOL 
-  //TODO: functions
-  //TYPE_FUNCTION,
+  TYPE_BOOL,
+  TYPE_FUNCTION
 } AttoType;
 
 typedef struct {
@@ -22,6 +21,13 @@ typedef struct {
 
 #define STRPTR(as) (as).ptr
 #define STRLEN(as) (as).len
+
+struct AttoBlock;
+
+typedef struct AttoFunction {
+  // TODO: library funtions
+  struct AttoBlock* b;  
+} AttoFunction;
 
 typedef ATTO_NUMBER AttoNumber;
 
@@ -38,8 +44,8 @@ typedef union Value_t {
   char bool;
   AttoNumber number;
   AttoString string;
+  AttoFunction function;
   Var var;
-  // TODO: function
 } Value;
 
 /* Tagged value*/
@@ -54,8 +60,10 @@ typedef struct {
 #define TV2STR(tv)  STRPTR((tv).value.string)
 
 #if defined DEBUG
-#define DEBUGF(format, args...) fprintf(stderr, "DEBUG: " format, ## args)
+#if !defined DEBUGF
+#define DEBUGF(format, ...) fprintf(stderr, "DEBUG: " format, __VA_ARGS__)
 #define DEBUGLN(msg) fprintf(stderr, "DEBUG: %s\n", msg)
+#endif
 #else
 #define DEBUGF(...)
 #define DEBUGLN(msg)

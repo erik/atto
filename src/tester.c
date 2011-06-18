@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "stack.h"
 #include "vm.h"
@@ -14,19 +15,16 @@
 
 #define INIT_TEST_OBJ                           \
   AttoVM* vm = AttoVMNew();                     \
-  AttoBlock* b = AttoBlockNew();                \
-  Stack s = StackNew()
+  AttoBlock* b = AttoBlockNew()
 
 #define DEINIT_TEST_OBJ                         \
   AttoVMDestroy(vm);                            \
-  AttoBlockDestroy(b);                          \
-  StackDestroy(&s)
+  AttoBlockDestroy(b)
 
 #define RESET_TEST_OBJ                          \
   DEINIT_TEST_OBJ;                              \
   vm = AttoVMNew();                             \
-  b = AttoBlockNew();                           \
-  s = StackNew()
+  b = AttoBlockNew()                           
 
 #define PASS                                    \
   DEINIT_TEST_OBJ;                              \
@@ -40,7 +38,7 @@
   AttoBlock_push_inst(b, OP_##op)
 
 #define INTERP {                                \
-    TValue res = vm_interpret(vm, b, 0, 0, &s); \
+    TValue res = vm_interpret(vm, b, 0, 0); \
     if(res.type == TYPE_ERROR) {                \
       printf("\tError: %s", res.value.error);   \
       FAIL;                                     \
@@ -255,6 +253,34 @@ int test_stack2() {
   PASS;    
 }
 
+int test_functions() {
+  INIT_TEST_OBJ;
+
+  AttoBlock* add = AttoBlockNew();
+  AttoBlock_push_inst(add, OP_ADD);
+  AttoBlock_push_inst(add, OP_RETURN);
+
+  TValue tf = createFunction(add);
+
+  push(&b->stack, createNumber(3));
+  push(&b->stack, createNumber(2));
+
+  push(&b->stack, createNumber(2));
+  push(&b->stack, tf);
+
+  ADD_OP(CALL);
+
+  INTERP;
+  
+  ASSERT(b->stack.top == 1);
+  ASSERT(TV2NUM(b->stack.values[0]) == 5);
+
+  AttoBlockDestroy(add);
+
+  PASS;
+}
+
+
 int main(int argc, char** argv) {
 
   TEST(nop,        "the ability of NOP to do nothing");
@@ -264,6 +290,7 @@ int main(int argc, char** argv) {
   TEST(comparison, "comparison operations");
   TEST(constants,  "constants");
   TEST(stack2,     "other stack operations");
+  TEST(functions,  "functions");
 
 }
 

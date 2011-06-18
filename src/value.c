@@ -2,6 +2,7 @@
 #include <string.h>
 
 #include "value.h"
+#include "block.h"
 
 TValue createError(char* msg) {
   TValue tv;
@@ -59,6 +60,17 @@ TValue createBool(char val) {
   tv.type = TYPE_BOOL;
   Value v;
   v.bool = val;
+  tv.value = v;
+  return tv;
+}
+
+TValue createFunction(AttoBlock* b) {
+  TValue tv;
+  Value v;
+  AttoFunction fcn;
+  tv.type = TYPE_FUNCTION;
+  fcn.b = b;
+  v.function = fcn;
   tv.value = v;
   return tv;
 }
@@ -196,6 +208,8 @@ char* TValue_to_string(TValue v) {
     return v.value.error;
   case TYPE_BOOL:
     return v.value.bool ? "TRUE" : "FALSE";
+  case TYPE_FUNCTION:
+    return "SOME FUNCTION";
   }   
   return "Unknown type";  
 }
@@ -221,6 +235,9 @@ char* TValue_type_to_string(TValue v) {
   case TYPE_BOOL:
     ret = "bool";
     break;
+  case TYPE_FUNCTION:
+    ret = "function";
+    break;
   default:
     ret = "(UNKNOWN)";
     break;
@@ -237,6 +254,7 @@ int boolValue(TValue t) {
   case TYPE_VAR:
   case TYPE_STRING:
   case TYPE_NUMBER:
+  case TYPE_FUNCTION:
     return 1;
   case TYPE_BOOL:
     return t.value.bool;
