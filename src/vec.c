@@ -37,8 +37,7 @@ void setIndex(Vector *vec, unsigned idx, TValue val) {
 
 TValue getIndex(Vector *vec, unsigned idx) {
   if(idx >= vec->size) {
-    puts("Error: getIndex: array index out of bounds");
-    return createNull();
+    return createNull("getIndex: array index out of bounds");
   }
   
   return vec->elements[idx];  

@@ -6,14 +6,14 @@
 
 Stack StackNew() {
   Stack s;
-  memset(s.values, sizeof(TValue) * MAX_STACK_SIZE, 0);
+  memset(s.values, sizeof(TValue), MAX_STACK_SIZE);
   s.top = 0;
   return s;
 }
 
 void StackDestroy(Stack* s) {
   s->top = 0;
-  memset(s->values, sizeof(TValue) * MAX_STACK_SIZE, 0);
+  memset(s->values, sizeof(TValue), MAX_STACK_SIZE);
 }
 
 Stack Stack_from_array(int argc, TValue* argv) {

@@ -90,7 +90,7 @@ TValue MathOp(int opcode, TValue a, TValue b) {
   AttoNumber arg0 = TV2NUM(a);
   AttoNumber arg1 = TV2NUM(b);
 
-  AttoNumber result = 1337;
+  AttoNumber result = 0;
 
   switch(opcode) {
   case OP_ADD:
@@ -104,8 +104,7 @@ TValue MathOp(int opcode, TValue a, TValue b) {
     break;
   case OP_DIV:
     if(arg1 == 0) {
-      puts("Error: divide by 0.");
-      return createNull();
+      return createError("divide by 0");
     }
     result = arg0 / arg1;
     break;
@@ -120,8 +119,7 @@ TValue MathOp(int opcode, TValue a, TValue b) {
     result = pow(arg0, arg1);
     break;
   default:
-    puts("Unrecognized opcode");
-    return createNull();
+    return createError("Unrecognized opcode");
   }
   return createNumber(result);
 }
@@ -130,7 +128,7 @@ TValue BitwiseOp(int opcode, TValue a, TValue b) {
   long arg0 = (long)TV2NUM(a);
   long arg1 = (long)TV2NUM(b);
 
-  AttoNumber result = 1337;
+  AttoNumber result = 0;
 
   switch(opcode) {
   case OP_OR:
@@ -143,7 +141,6 @@ TValue BitwiseOp(int opcode, TValue a, TValue b) {
     result = arg0 ^ arg1;
     break;
   default:
-    puts("Unrecognized opcode");
     return createError("Unrecognized opcode");
   }
   return createNumber(result);
