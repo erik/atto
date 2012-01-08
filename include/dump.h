@@ -15,10 +15,10 @@
 typedef int (*Writer)(AttoVM *vm, const void *p, size_t s, void* d);
 
 typedef struct {
-  AttoVM* vm;
-  Writer writer;
-  void *data;
-  int status;
+    AttoVM* vm;
+    Writer writer;
+    void *data;
+    int status;
 } DumpState;
 
 Proto *Proto_from_block(AttoVM*, AttoBlock*);

@@ -7,11 +7,11 @@
 #include "value.h"
 
 typedef struct AttoBlock {
-  Vector* k;     /* constants */
-  int sizev;
-  TValue *vars;
-  Vector* code;  /* opcodes */
-  Stack stack;
+    Vector* k;     /* constants */
+    int sizev;
+    TValue *vars;
+    Vector* code;  /* opcodes */
+    Stack stack;
 } AttoBlock;
 
 AttoBlock  *AttoBlockNew();

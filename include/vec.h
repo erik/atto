@@ -8,9 +8,9 @@
 #define VECTOR_RESIZE_STEP  5
 
 typedef struct {
-  TValue *elements;
-  unsigned size;
-  unsigned alloc;
+    TValue *elements;
+    unsigned size;
+    unsigned alloc;
 } Vector;
 
 
